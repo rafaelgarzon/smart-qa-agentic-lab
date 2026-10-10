@@ -8,12 +8,16 @@ export class InventoryPage {
   readonly page: Page;
   readonly headerTitle: Locator;
   readonly inventoryItems: Locator;
+  readonly firstItemPrice: Locator;
+  readonly firstItemAddToCartButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     // En SauceDemo el título del catálogo es identificable por data-test="title"
     this.headerTitle = page.locator('[data-test="title"]');
     this.inventoryItems = page.locator('[data-test="inventory-item"]');
+    this.firstItemPrice = this.inventoryItems.locator('[data-test="inventory-item-price"]').first();
+    this.firstItemAddToCartButton = this.inventoryItems.getByRole('button', { name: 'Add to cart' }).first();
   }
 
   /**
@@ -43,6 +47,11 @@ export class InventoryPage {
    */
   async hasAnyAvailableItem(): Promise<boolean> {
     const count = await this.inventoryItems.count();
-    return count > 0;
+    if (count < 1) {
+      return false;
+    }
+    await expect(this.firstItemPrice).toBeVisible();
+    await expect(this.firstItemAddToCartButton).toBeEnabled();
+    return true;
   }
 }

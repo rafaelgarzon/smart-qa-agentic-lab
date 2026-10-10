@@ -220,15 +220,15 @@ Mapeo explícito entre requisitos, método del Page Object y archivo de test.
 
 ## 10. Checklist de Implementación (previo a código)
 
-- [ ] Crear estructura de directorios `pages/`, `tests/`, `fixtures/` (según necesidad).
-- [ ] Implementar `LoginPage` con locators semánticos (prioridad role/placeholder/label/text).
-- [ ] Implementar `InventoryPage` con verificación de encabezado e ítems.
-- [ ] Configurar fixtures con aislamiento (sin compartir storageState).
-- [ ] Escribir tests `auth.spec.ts` cubriendo RF-1–RF-6 con aserciones `expect` auto-reintentables.
-- [ ] Verificar **cero** `waitForTimeout` en código.
-- [ ] Ejecutar `npx playwright test --list` para validar estructura.
-- [ ] Validar textos canónicos reales (exploración) antes de fijar `toHaveText` exacto.
-- [ ] Confirmar cobertura 100% RF-1–RF-6 contra matriz.
+- [x] Crear estructura de directorios `pages/`, `tests/`, `fixtures/` (según necesidad).
+- [x] Implementar `LoginPage` con locators semánticos (prioridad role/placeholder/label/text).
+- [x] Implementar `InventoryPage` con verificación de encabezado e ítems.
+- [x] Configurar fixtures con aislamiento (sin compartir storageState).
+- [x] Escribir tests `auth.spec.ts` cubriendo RF-1–RF-6 con aserciones `expect` auto-reintentables.
+- [x] Verificar **cero** `waitForTimeout` en código.
+- [x] Ejecutar `npx playwright test --list` para validar estructura.
+- [x] Validar textos canónicos reales (exploración) antes de fijar `toHaveText` exacto.
+- [x] Confirmar cobertura 100% RF-1–RF-6 contra matriz.
 
 ---
 
