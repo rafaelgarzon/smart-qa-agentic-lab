@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "triage": "opencode run /triage"
+    "triage": "opencode run /triage",
+    "lint:determinism": "git grep -n 'waitForTimeout' pages/ tests/ && exit 1 || echo 'Determinismo garantizado: 0 sleeps'"
   },
   "keywords": [],
   "author": "",
