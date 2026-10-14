@@ -257,4 +257,46 @@ test.describe('Spec 004: Gestión del Carrito SauceDemo', () => {
     expect(remainingNames).not.toContain(removedName);
     await expect(cartPage.getItemLocatorByName(removedName)).toHaveCount(0);
   });
+
+  test('TC-10 RF-10: la inmutabilidad conserva nombre, descripción, precio y QTY de los ítems no removidos', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    // Precondición: 2 ítems para remover uno y certificar la inmutabilidad del restante.
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 2);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+
+    // Se captura el estado completo del carrito antes de la operación destructiva (RF-10).
+    const snapshot = await cartPage.getItems();
+    expect(snapshot).toHaveLength(selectedNames.length);
+
+    const [removedName, remainingName] = selectedNames;
+    const expectedRemaining = snapshot.find((item) => item.name === remainingName);
+    if (!expectedRemaining) {
+      throw new Error(`No se capturó el ítem "${remainingName}" antes de la remoción`);
+    }
+
+    // Se elimina el otro ítem: debe permanecer únicamente el ítem no removido.
+    await cartPage.removeItemByName(removedName);
+    await expect(cartPage.cartItems).toHaveCount(1);
+
+    // El ítem restante coincide campo a campo con la captura previa (RF-10).
+    const [afterRemoval] = await cartPage.getItems();
+    expect(afterRemoval).toEqual(expectedRemaining);
+    expect(afterRemoval.name).toBe(expectedRemaining.name);
+    expect(afterRemoval.description).toBe(expectedRemaining.description);
+    expect(afterRemoval.price).toBe(expectedRemaining.price);
+    expect(afterRemoval.quantity).toBe(CART_QUANTITY);
+
+    // El ítem removido no reaparece en el carrito.
+    await expect(cartPage.getItemLocatorByName(removedName)).toHaveCount(0);
+  });
 });

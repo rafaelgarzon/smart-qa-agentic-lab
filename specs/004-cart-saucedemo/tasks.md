@@ -33,7 +33,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T8. TC-6 persistencia del carrito restante y badge tras `reload()`.** RF-6.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: tras recargar se conservan exactamente los ítems restantes (mismos nombres), el badge se mantiene y el ítem removido no reaparece.
-- [ ] **T9. TC-10 inmutabilidad de nombres, descripción, precio y QTY de los ítems no removidos.** RF-10.
+- [x] **T9. TC-10 inmutabilidad de nombres, descripción, precio y QTY de los ítems no removidos.** RF-10.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: el `CartItem` capturado antes de remover coincide campo a campo con el ítem que permanece tras la operación.
 
