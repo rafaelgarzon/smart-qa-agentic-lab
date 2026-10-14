@@ -24,7 +24,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T5. TC-3 + TC-8 remove decrementa badge y eliminación múltiple secuencial (3→2→1).** RF-3, RF-8.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: tras cada remoción el conteo y el badge quedan sincronizados reactivamente en cada paso, sin desfases.
-- [ ] **T6. TC-4 + TC-7 estado de carrito vacío por vaciamiento total y por deep-link a `/cart.html`.** RF-4, RF-7.
+- [x] **T6. TC-4 + TC-7 estado de carrito vacío por vaciamiento total y por deep-link a `/cart.html`.** RF-4, RF-7.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: con carrito vacío `cartItems` con `toHaveCount(0)` y badge con `toHaveCount(0)`, sin errores ni estados inconsistentes.
 - [ ] **T7. TC-5 + TC-9 `Continue Shopping` preserva badge y regreso al inventario restaura "Add to cart".** RF-5, RF-9.

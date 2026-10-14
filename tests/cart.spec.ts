@@ -123,4 +123,43 @@ test.describe('Spec 004: Gestión del Carrito SauceDemo', () => {
       }
     }
   });
+
+  test('TC-4 RF-4: el vaciamiento total deja la lista sin ítems y oculta por completo el badge', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    // Precondición: se añaden ≥2 ítems para certificar el vaciamiento ítem por ítem.
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 2);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length));
+
+    // Se elimina cada ítem hasta vaciar el carrito por completo.
+    for (const name of selectedNames) {
+      await cartPage.removeItemByName(name);
+    }
+
+    await cartPage.verifyEmptyCart();
+    await expect(cartPage.cartItems).toHaveCount(0);
+    await expect(cartPage.shoppingCartBadge).toHaveCount(0);
+  });
+
+  test('TC-7 RF-7: el acceso directo a /cart.html con carrito vacío presenta un estado válido sin errores', async ({
+    page,
+    cartPage,
+  }) => {
+    // Deep-link tras autenticar en beforeEach, sin añadir ítems previamente.
+    await page.goto('/cart.html');
+    await cartPage.verifyCartLoaded();
+    await cartPage.verifyEmptyCart();
+    await expect(cartPage.cartItems).toHaveCount(0);
+    await expect(cartPage.shoppingCartBadge).toHaveCount(0);
+  });
 });
