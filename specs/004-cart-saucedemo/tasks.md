@@ -10,7 +10,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
   - Hecho cuando: compila con `strict` sin `any` y exporta `CART_QUANTITY`, `CartItem` y el patrón de precio compartido.
 
 ## Fase 1: Page Object Model — cambios aditivos (45 min)
-- [ ] **T2. Extender `CartPage` con lectura de datos del carrito (nombres, descripciones, precios parseados, QTY y `getItemLocatorByName`).** RF-1, RF-2, RF-10.
+- [x] **T2. Extender `CartPage` con lectura de datos del carrito (nombres, descripciones, precios parseados, QTY y `getItemLocatorByName`).** RF-1, RF-2, RF-10.
   - Archivos: `pages/cart.page.ts`
   - Hecho cuando: getters tipados (`CartItem[]`, `number[]`, `string[]`) y `getItemLocatorByName(name)` retornan datos reales del DOM con precio vía `PRICE_PATTERN` + `parseFloat`.
 - [ ] **T3. Extender `CartPage` con mutación y estado (remove por texto, badge, `continueShopping`, `reload` y validación de carrito vacío).** RF-3, RF-4, RF-5, RF-6, RF-8.
