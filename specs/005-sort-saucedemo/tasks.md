@@ -22,7 +22,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
 
 ## Fase 2 — Pruebas E2E (mapeo 1:1 RF-1..RF-8)
 
-- [ ] **T3. TC-1 — RF-1: oráculo léxico A-Z y monotonicidad** RF-1
+- [x] **T3. TC-1 — RF-1: oráculo léxico A-Z y monotonicidad** RF-1
   En `tests/sort.spec.ts`: `selectSortAndSettle('az')`; `expect(nombres).toEqual(expectedNames('az'))`; validar relación monótona no decreciente con `localeCompareEn` par a par.
   Hecho cuando: el test pasa en Chromium y falla si se altera el orden del DOM.
 
