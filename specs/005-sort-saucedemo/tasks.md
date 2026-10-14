@@ -16,8 +16,8 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
 
 ## Fase 1 — Extensión POM aditiva
 
-- [ ] **T2. Extender `pages/inventory.page.ts` y habilitar locator semántico** RF-6, RF-7, RF-8
-  Añadir de forma **aditiva**: control de orden vía `page.locator('[data-test="product-sort-container"]')` (fallback `page.locator('select.product_sort_container')`; **NO se modifica `playwright.config.ts`** por decisión HITL), lectura de valor del `<select>`, el método reactivo `selectSortAndSettle(option)` que espera el asentamiento del primer ítem (`expect(firstName).toHaveText(expectedNames(option)[0])`) y los helpers de navegación `openProductDetail(name)` / `goBackToProducts()`. Conservar intactos todos los locators y métodos actuales (001–004).
+- [x] **T2. Extender `pages/inventory.page.ts` y habilitar locator semántico** RF-6, RF-7, RF-8
+  Añadido de forma **aditiva**: locator `sortDropdown` vía `page.locator('[data-test="product-sort-container"]')` (fallback documentado `select.product_sort_container`; **NO se modifica `playwright.config.ts`** por decisión HITL), locator `firstItemTitle`, el método reactivo `selectSortAndSettle(option)` que espera el asentamiento del primer ítem (`expect(firstItemTitle).toHaveText(expectedNames(option)[0])`) y los lectores tipados `getItemNames()` / `getItemPrices()`. Los helpers de navegación `openProductDetail(name)` / `goBackToProducts()` se difieren a T8 (Flujo B de RF-6). Conservados intactos todos los locators y métodos actuales (001–004).
   Hecho cuando: `npm run test:all` sigue en verde para las suites 001–004 y `npm run lint:determinism` reporta 0 sleeps.
 
 ## Fase 2 — Pruebas E2E (mapeo 1:1 RF-1..RF-8)
@@ -43,7 +43,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   Hecho cuando: ambas secuencias fijan el empate en A-Z y el test falla si se invierte.
 
 - [ ] **T8. TC-6 — RF-6: reset invariante a `az`** RF-6
-  Tras `selectSort('za')`, verificar reset a `az` en: (a) `reload()`; (b) Flujo A (`/cart.html` + `Continue Shopping`); (c) Flujo B (detalle de "Sauce Labs Backpack" + `Back to products`). Validar valor del `<select>` y primer ítem `expectedNames('az')[0]`.
+  Tras `selectSort('za')`, verificar reset a `az` en: (a) `reload()`; (b) Flujo A (`/cart.html` + `Continue Shopping`); (c) Flujo B (detalle de "Sauce Labs Backpack" + `Back to products`). Validar valor del `<select>` y primer ítem `expectedNames('az')[0]`. Requiere añadir previamente los helpers `openProductDetail(name)` / `goBackToProducts()` al POM (diferidos desde T2).
   Hecho cuando: los tres escenarios confirman `az` y el test pasa en Chromium.
 
 - [ ] **T9. TC-7 — RF-7: asentamiento reactivo del re-render** RF-7
