@@ -1,6 +1,6 @@
 # Spec 004 — Gestión del Carrito SauceDemo
 
-Estado: borrador
+Estado: aprobada
 
 ## Contexto y Objetivo
 Automatizar y certificar el comportamiento contractual de la vista de carrito de SauceDemo (`/cart.html`), con foco exclusivo en la **gestión del carrito**: la eliminación de ítems, el decremento sincronizado del badge, el estado de carrito vacío y el retorno al catálogo mediante "Continue Shopping". La suite garantiza la trazabilidad del contenido del carrito y su consistencia con la vista de inventario, sin solaparse con la navegación base ni la consistencia de ítems ya cubiertas por la spec 002.
