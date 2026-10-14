@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/test-fixtures';
-import { EXPECTED_PRODUCT_COUNT, PRICE_PATTERN } from '../types/inventory.types';
+import { EXPECTED_PRODUCT_COUNT, PRICE_PATTERN, SORT_OPTIONS } from '../types/inventory.types';
 
 test.describe('Spec 003: Inventario SauceDemo', () => {
   test.beforeEach(async ({ page, loginPage }) => {
@@ -31,5 +31,28 @@ test.describe('Spec 003: Inventario SauceDemo', () => {
     for (let index = 0; index < EXPECTED_PRODUCT_COUNT; index++) {
       await expect(buttons.nth(index)).toBeEnabled();
     }
+  });
+
+  test('TC-2 RF-2: el catálogo carga por defecto en orden alfabético ascendente "Name (A to Z)"', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+    await expect(inventoryPage.sortSelect).toHaveValue(SORT_OPTIONS.nameAsc);
+
+    const names = await inventoryPage.getProductNames();
+    expect(names).toEqual([...names].sort());
+  });
+
+  test('TC-3 RF-3: el criterio "Name (Z to A)" reordena los 6 ítems alfabéticamente descendente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+    const ascending = await inventoryPage.getProductNames();
+
+    await inventoryPage.selectSort('nameDesc');
+    await expect(inventoryPage.inventoryItems).toHaveCount(EXPECTED_PRODUCT_COUNT);
+
+    const names = await inventoryPage.getProductNames();
+    expect(names).toEqual([...ascending].sort().reverse());
   });
 });

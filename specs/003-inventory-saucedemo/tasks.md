@@ -23,7 +23,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
 - [x] **T5. TC-1 integridad del catálogo (6 ítems con nombre, descripción, precio `$XX.YY` y botón habilitado).** RF-1.
   - Archivos: `tests/inventory.spec.ts`, `fixtures/test-fixtures.ts`
   - Hecho cuando: `npx playwright test tests/inventory.spec.ts -g "integridad" --project=chromium` en verde.
-- [ ] **T6. TC-2/TC-3 orden por defecto A-Z y Name Z-A.** RF-2, RF-3.
+- [x] **T6. TC-2/TC-3 orden por defecto A-Z y Name Z-A.** RF-2, RF-3.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: la secuencia del DOM iguala la esperada en ambos sentidos.
 - [ ] **T7. TC-4/TC-5 orden por precio low→high y high→low.** RF-4, RF-5.
