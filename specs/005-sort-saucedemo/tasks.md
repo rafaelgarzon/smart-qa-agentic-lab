@@ -56,6 +56,6 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
 
 ## Fase 3 — Quality Gate transversal
 
-- [ ] **T11. Quality Gate: determinismo, no-regresión y trazabilidad** RF-1..RF-8
+- [x] **T11. Quality Gate: determinismo, no-regresión y trazabilidad** RF-1..RF-8
   Ejecutar `npm run lint:determinism` (0 sleeps) y `npm run test:all` (Chromium, suites 001..005 en verde). Verificar la matriz de trazabilidad RF → TC del plan y la ausencia de solapamiento con la UI elemental de 003.
   Hecho cuando: `lint:determinism` limpio y `test:all` en verde incluyendo `tests/sort.spec.ts` (N+8 tests), con matriz RF→TC confirmada.

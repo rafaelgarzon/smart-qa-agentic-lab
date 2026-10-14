@@ -2,7 +2,7 @@
 
 ## Estado del Repositorio
 - Fecha: 2026-10-14
-- Rama: `feature/004-cart-spec` (spec 004 cerrada formalmente; working tree limpio).
+- Rama: `feature/005-sort-spec` (spec 005 cerrada formalmente; working tree limpio).
 - Metodología: Spec-Driven Development (SDD) con arnés agéntico y control HitL.
 
 ## Especificaciones Consolidadas
@@ -32,9 +32,20 @@
     - `types/cart.types.ts`: contratos tipados (`CartItem`) e invariante `CART_QUANTITY = 1` (reexport de `PRICE_PATTERN`).
     - `pages/cart.page.ts`: extensión aditiva con getters tipados, mutación reactiva y navegación (retrocompatible con spec 002).
     - `tests/cart.spec.ts`: 10 tests E2E cubriendo RF-1 a RF-11.
+- `specs/005-sort-saucedemo`: 100% cerrada (RF-1 a RF-8 cubiertos, 8/8 passed en Chromium).
+  - RF-1/RF-2: oráculos léxicos A-Z y Z-A idénticos a `expectedNames(option)` con monotonicidad no decreciente/no creciente.
+  - RF-3/RF-4: oráculos numéricos low→high y high→low idénticos a `expectedPrices(option)` con monotonicidad verificada.
+  - RF-5: desempate A-Z determinista ante empates de `$15.99` (`Bolt` antes de `Test.allTheThings()`), independiente del criterio previo (`za → lohi` y `za → hilo`).
+  - RF-6: el criterio se restablece a `az` tras `reload()`, roundtrip al carrito (`Continue Shopping`) y roundtrip al detalle (`Back to products`).
+  - RF-7: asentamiento reactivo del re-render — primer ítem capturado nunca es lectura stale (0 curso de carrera).
+  - RF-8: locator semántico `[data-test="product-sort-container"]` expuesto por el POM, 4 opciones reactivas, sin mutación de `playwright.config.ts`.
+  - Capacidades incorporadas:
+    - `types/sort.types.ts`: contratos y oráculos puros (`SortOption`, `GOLDEN_PRODUCTS`, `TIE_PRICE = 15.99`, `localeCompareEn`, `expectedNames`, `expectedPrices`).
+    - `pages/inventory.page.ts`: extensión aditiva (`sortDropdown`, `firstItemTitle`, `selectSortAndSettle`, `getItemNames`/`getItemPrices`, `openProductDetail`, `goBackToProducts`).
+    - `tests/sort.spec.ts`: 8 tests E2E cubriendo RF-1 a RF-8 (TC-1..TC-8).
 
 ## Suite de Regresión Global
-- `npm run test:all`: 25 passed en Chromium (auth 5 + checkout 3 + inventory 7 + cart 10) — specs 001 a 004.
+- `npm run test:all`: 33 passed en Chromium (auth 5 + checkout 3 + inventory 7 + cart 10 + sort 8) — specs 001 a 005.
 - `npm run lint:determinism`: 0 sleeps / 0 `waitForTimeout` en todo el arnés.
 
 ## Capacidades de Calibración RCA
