@@ -4,7 +4,7 @@ Estado: pendiente
 Referencia: specs/003-inventory-saucedemo/plan.md
 
 ## Fase 0: Andamiaje y Modelado de Tipos (15 min)
-- [ ] **T1. Crear `types/inventory.types.ts`** con `SORT_OPTIONS` (label↔value `az|za|lohi|hilo`), `EXPECTED_PRODUCT_COUNT = 6`, `interface InventoryProduct` y regex de precio. RF-1, RF-2, RF-3, RF-4, RF-5, RF-6, RF-7.
+- [x] **T1. Crear `types/inventory.types.ts`** con `SORT_OPTIONS` (label↔value `az|za|lohi|hilo`), `EXPECTED_PRODUCT_COUNT = 6`, `interface InventoryProduct` y regex de precio. RF-1, RF-2, RF-3, RF-4, RF-5, RF-6, RF-7.
   - Archivos: `types/inventory.types.ts`
   - Hecho cuando: compila con `strict` sin `any` y exporta los tipos y etiquetas de ordenamiento.
 
