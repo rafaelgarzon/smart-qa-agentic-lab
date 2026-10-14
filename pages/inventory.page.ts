@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { InventoryProduct, PRICE_PATTERN } from '../types/inventory.types';
+import { InventoryProduct, PRICE_PATTERN, SORT_OPTIONS, SortKey } from '../types/inventory.types';
 
 export class InventoryPage {
   readonly page: Page;
@@ -8,6 +8,7 @@ export class InventoryPage {
   readonly itemName: Locator;
   readonly itemDescription: Locator;
   readonly itemPrice: Locator;
+  readonly sortSelect: Locator;
   readonly firstItemPrice: Locator;
   readonly firstItemActionButton: Locator;
   readonly shoppingCartBadge: Locator;
@@ -20,6 +21,7 @@ export class InventoryPage {
     this.itemName = page.locator('[data-test="inventory-item-name"]');
     this.itemDescription = page.locator('[data-test="inventory-item-desc"]');
     this.itemPrice = page.locator('[data-test="inventory-item-price"]');
+    this.sortSelect = page.locator('[data-test="product-sort-container"]');
     this.firstItemPrice = this.inventoryItems.first().locator('[data-test="inventory-item-price"]');
     // Selector agnóstico al estado textual (Add to Cart vs Remove)
     this.firstItemActionButton = this.inventoryItems.first().locator('button.btn_inventory');
@@ -68,6 +70,11 @@ export class InventoryPage {
     const match = text.match(PRICE_PATTERN);
     if (!match) throw new Error(`No se pudo parsear el precio en: "${text}"`);
     return parseFloat(match[1]);
+  }
+
+  async selectSort(option: SortKey): Promise<void> {
+    await this.sortSelect.selectOption(SORT_OPTIONS[option]);
+    await expect(this.sortSelect).toHaveValue(SORT_OPTIONS[option]);
   }
 
   async waitForInventoryLoaded(): Promise<void> {
