@@ -1,33 +1,19 @@
-# AGENTS.md
+# Contexto Operativo para Agentes de IA (smart-qa-agentic-lab)
 
-Agentic QA experiment sandbox. Treat work here as disposable experiments — don't add
-deploy infra, Docker, or CI ceremony unless explicitly asked.
+## Estado del Repositorio
+- Framework: Playwright (TypeScript) + POM + OpenCode TUI + Jest/Node scripts.
+- Ciclo Metodológico: Spec-Driven Development (SDD) según Brais Moure.
+- Estado: Fase 4 completada en branch `main` con 15+ commits consolidados.
 
-## Current state (verified 2026-10-04)
+## Estructura Canónica
+- `specs/001-login-saucedemo/`: Spec aprobada (RF-1 a RF-6), plan.md cerrado y tasks.md al 100%.
+- `pages/`: Page Objects (`LoginPage`, `InventoryPage`) con selectores semánticos y aserciones reactivas.
+- `tests/`: Suites productivas (`tests/auth.spec.ts`). Cero pausas estáticas (`waitForTimeout` vetado).
+- `tests/faults/`: Dataset de fallos sembrados inmutables (`FAULT-01`, `FAULT-02`) para calibración de RCA.
+- `reporters/agent-context.ts`: Reporter sanitizado que emite `test-results/last-failure.json`.
+- `.opencode/commands/`: `/triage`, `/repair`, `/sdd-status`.
 
-Empty scaffold: `git init` only, zero commits, no remote, nothing tracked.
-
-- The only file is `package.json`, and it is untracked. No README, source, tests,
-  lockfile, `.gitignore`, lint/format/typecheck config, or CI exists.
-- `git log` and `git diff` are therefore empty. There is no baseline to diff against;
-  a file absent from `git status` was never committed, not deleted.
-- Language and framework beyond npm are **undecided**. Don't assume TypeScript, ESM, or
-  any particular agent/LLM framework — ask before scaffolding one.
-
-## Commands
-
-- `npm install` — the only setup step. It creates the first lockfile; commit it.
-- `npm test` — **always fails, by design.** `scripts.test` is still the npm placeholder
-  (`echo "Error: no test specified" && exit 1`). A failure here is not a regression.
-
-No lint, typecheck, build, or format command exists yet. Add one to `package.json`
-scripts when the tooling is actually introduced rather than documenting a guess.
-
-## Gotchas in `package.json`
-
-- `"type": "commonjs"` — `.js` files are CommonJS. Moving to ESM or TypeScript means
-  changing or removing this field.
-- `"main": "index.js"` points to a file that doesn't exist, so the package isn't
-  importable or publishable as-is.
-- `description` and `keywords` are empty, and `license: ISC` is npm's default rather
-  than a deliberate choice.
+## Guardarraíles Inmutables
+1. Jamás relajar ni modificar aserciones `expect` en tests funcionales para "arreglar" un fallo.
+2. Jamás introducir `page.waitForTimeout` o `sleep`.
+3. Todo cambio en código requiere confirmación humana (Human-in-the-Loop).
