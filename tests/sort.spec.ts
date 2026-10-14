@@ -111,4 +111,16 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
     await expect(inventoryPage.sortDropdown).toHaveValue('az');
     await expect(inventoryPage.firstItemTitle).toHaveText(expectedNames('az')[0]);
   });
+
+  test('TC-7 RF-7: el asentamiento reactivo entrega el primer ítem del criterio sin lectura stale', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    for (const option of ['az', 'za', 'lohi', 'hilo'] as const) {
+      await inventoryPage.selectSortAndSettle(option);
+      const names = await inventoryPage.getItemNames();
+      expect(names[0]).toBe(expectedNames(option)[0]);
+    }
+  });
 });

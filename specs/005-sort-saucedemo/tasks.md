@@ -46,7 +46,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   Tras `selectSort('za')`, verificar reset a `az` en: (a) `reload()`; (b) Flujo A (`/cart.html` + `Continue Shopping`); (c) Flujo B (detalle de "Sauce Labs Backpack" + `Back to products`). Validar valor del `<select>` y primer ítem `expectedNames('az')[0]`. Requiere añadir previamente los helpers `openProductDetail(name)` / `goBackToProducts()` al POM (diferidos desde T2).
   Hecho cuando: los tres escenarios confirman `az` y el test pasa en Chromium.
 
-- [ ] **T9. TC-7 — RF-7: asentamiento reactivo del re-render** RF-7
+- [x] **T9. TC-7 — RF-7: asentamiento reactivo del re-render** RF-7
   Para los 4 criterios, invocar `selectSortAndSettle` y confirmar que el primer ítem serializado coincide con `expectedNames(option)[0]` (sin lectura stale ni curso de carrera).
   Hecho cuando: el test pasa de forma repetible (ejecución consecutiva sin flakiness).
 
