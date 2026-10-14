@@ -87,4 +87,28 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
       ]);
     }
   });
+
+  test('TC-6 RF-6: el criterio se restablece a "Name (A to Z)" tras reload y navegación cruzada', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    await inventoryPage.selectSortAndSettle('za');
+    await inventoryPage.reload();
+    await expect(inventoryPage.sortDropdown).toHaveValue('az');
+    await expect(inventoryPage.firstItemTitle).toHaveText(expectedNames('az')[0]);
+
+    await inventoryPage.selectSortAndSettle('lohi');
+    await inventoryPage.goToCart();
+    await cartPage.clickContinueShopping();
+    await expect(inventoryPage.sortDropdown).toHaveValue('az');
+    await expect(inventoryPage.firstItemTitle).toHaveText(expectedNames('az')[0]);
+
+    await inventoryPage.selectSortAndSettle('hilo');
+    await inventoryPage.openProductDetail('Sauce Labs Backpack');
+    await inventoryPage.goBackToProducts();
+    await expect(inventoryPage.sortDropdown).toHaveValue('az');
+    await expect(inventoryPage.firstItemTitle).toHaveText(expectedNames('az')[0]);
+  });
 });

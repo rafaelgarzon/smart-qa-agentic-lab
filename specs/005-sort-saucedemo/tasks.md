@@ -42,7 +42,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   `selectSort('za')` y luego `selectSortAndSettle('lohi')`: el par `$15.99` debe ser `['Sauce Labs Bolt T-Shirt','Test.allTheThings() T-Shirt (Red)']`; repetir la secuencia `za → hilo`.
   Hecho cuando: ambas secuencias fijan el empate en A-Z y el test falla si se invierte.
 
-- [ ] **T8. TC-6 — RF-6: reset invariante a `az`** RF-6
+- [x] **T8. TC-6 — RF-6: reset invariante a `az`** RF-6
   Tras `selectSort('za')`, verificar reset a `az` en: (a) `reload()`; (b) Flujo A (`/cart.html` + `Continue Shopping`); (c) Flujo B (detalle de "Sauce Labs Backpack" + `Back to products`). Validar valor del `<select>` y primer ítem `expectedNames('az')[0]`. Requiere añadir previamente los helpers `openProductDetail(name)` / `goBackToProducts()` al POM (diferidos desde T2).
   Hecho cuando: los tres escenarios confirman `az` y el test pasa en Chromium.
 

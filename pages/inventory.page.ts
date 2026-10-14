@@ -16,6 +16,7 @@ export class InventoryPage {
   readonly firstItemActionButton: Locator;
   readonly shoppingCartBadge: Locator;
   readonly shoppingCartLink: Locator;
+  readonly backToProductsButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -32,6 +33,7 @@ export class InventoryPage {
     this.firstItemActionButton = this.inventoryItems.first().locator('button.btn_inventory');
     this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
     this.shoppingCartLink = page.locator('[data-test="shopping-cart-link"]');
+    this.backToProductsButton = page.locator('[data-test="back-to-products"]');
   }
 
   // Retrocompatibilidad con suites existentes
@@ -137,5 +139,19 @@ export class InventoryPage {
 
   async goToCart(): Promise<void> {
     await this.shoppingCartLink.click();
+  }
+
+  /** Abre la vista de detalle de un producto por su nombre (navegación cruzada B, RF-6). */
+  async openProductDetail(name: string): Promise<void> {
+    await this.getItemLocatorByName(name).locator('[data-test="inventory-item-name"]').click();
+    await expect(this.page).toHaveURL(/inventory-item\.html/);
+    await expect(this.backToProductsButton).toBeVisible();
+  }
+
+  /** Regresa al inventario desde la vista de detalle vía "Back to products" (RF-6). */
+  async goBackToProducts(): Promise<void> {
+    await this.backToProductsButton.click();
+    await expect(this.page).toHaveURL(/inventory\.html/);
+    await this.waitForInventoryLoaded();
   }
 }
