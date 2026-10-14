@@ -19,22 +19,32 @@ export class InventoryPage {
     this.shoppingCartLink = page.locator('[data-test="shopping-cart-link"]');
   }
 
+  // Métodos canónicos consumidos por tests/auth.spec.ts (Spec 001)
+  getHeaderLocator(): Locator {
+    return this.headerTitle;
+  }
+
+  async getItemsCount(): Promise<number> {
+    return await this.inventoryItems.count();
+  }
+
   async waitForInventoryLoaded(): Promise<void> {
     await expect(this.headerTitle).toBeVisible();
     await expect(this.headerTitle).toHaveText('Products');
-  }
-
-  async addFirstItemToCart(): Promise<void> {
-    await this.firstItemAddToCartButton.click();
-  }
-
-  async goToCart(): Promise<void> {
-    await this.shoppingCartLink.click();
   }
 
   async hasAnyAvailableItem(): Promise<boolean> {
     await expect(this.firstItemPrice).toBeVisible();
     await expect(this.firstItemAddToCartButton).toBeEnabled();
     return true;
+  }
+
+  // Métodos del flujo de compra (Spec 002)
+  async addFirstItemToCart(): Promise<void> {
+    await this.firstItemAddToCartButton.click();
+  }
+
+  async goToCart(): Promise<void> {
+    await this.shoppingCartLink.click();
   }
 }
