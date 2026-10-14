@@ -21,4 +21,19 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
       expect(localeCompareEn(names[index - 1], names[index])).toBeLessThanOrEqual(0);
     }
   });
+
+  test('TC-2 RF-2: el criterio "Name (Z to A)" es idéntico al oráculo léxico y monótono no creciente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+    await inventoryPage.selectSortAndSettle('za');
+    await expect(inventoryPage.sortDropdown).toHaveValue('za');
+
+    const names = await inventoryPage.getItemNames();
+    expect(names).toEqual(expectedNames('za'));
+
+    for (let index = 1; index < names.length; index++) {
+      expect(localeCompareEn(names[index - 1], names[index])).toBeGreaterThanOrEqual(0);
+    }
+  });
 });

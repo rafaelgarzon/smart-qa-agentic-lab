@@ -26,7 +26,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   En `tests/sort.spec.ts`: `selectSortAndSettle('az')`; `expect(nombres).toEqual(expectedNames('az'))`; validar relación monótona no decreciente con `localeCompareEn` par a par.
   Hecho cuando: el test pasa en Chromium y falla si se altera el orden del DOM.
 
-- [ ] **T4. TC-2 — RF-2: oráculo léxico Z-A y monotonicidad** RF-2
+- [x] **T4. TC-2 — RF-2: oráculo léxico Z-A y monotonicidad** RF-2
   `selectSortAndSettle('za')`; `toEqual(expectedNames('za'))`; monótona no creciente bajo `localeCompareEn`.
   Hecho cuando: el test pasa en Chromium.
 
