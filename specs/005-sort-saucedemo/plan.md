@@ -24,7 +24,7 @@ Diseñar la arquitectura técnica para auditar la **lógica algorítmica** del o
 |---|---|---|
 | `types/sort.types.ts` | crear | Contratos tipados y **oráculos puros** (sin DOM): `SortOption = 'az' \| 'za' \| 'lohi' \| 'hilo'`, `GoldenProduct`, `GOLDEN_PRODUCTS` (lista dorada fija), comparador `localeCompareEn` y firmas/impl de oráculo `expectedNames(option)` / `expectedPrices(option)`. |
 | `pages/inventory.page.ts` | modificar (aditivo) | Locator semántico del control de orden, lectura de valor del `<select>`, **selección con asentamiento reactivo** (RF-7) y helpers de navegación a detalle/regreso. Conserva todos los locators/métodos actuales. |
-| `playwright.config.ts` | modificar (aditivo) | Añadir `testIdAttribute: 'data-test'` en `use` para habilitar `getByTestId('product-sort-container')` sin romper nada. Cambio no estructural y retrocompatible. |
+| `playwright.config.ts` | sin cambios | **Prohibido mutar infraestructura global (decisión HITL).** No se añade `testIdAttribute`; el POM usa el fallback `page.locator('[data-test="product-sort-container"]')` / `select.product_sort_container`. |
 | `tests/sort.spec.ts` | crear | Suite TC-1 a TC-8 cubriendo RF-1 a RF-8 con aserciones reactivas. |
 | `fixtures/test-fixtures.ts` | sin cambios | `inventoryPage` y `cartPage` ya inyectados; el aislamiento por test ya está garantizado. |
 
@@ -45,7 +45,7 @@ export function expectedPrices(option: SortOption): number[];    // oráculo num
 ### 4.2 Selectores (prioridad semántica, constitución §4)
 | Elemento | Selector / API |
 |---|---|
-| Control de orden | `page.getByTestId('product-sort-container')` (tras `testIdAttribute: 'data-test'`); fallback documentado `page.locator('select.product_sort_container')` |
+| Control de orden | `page.locator('[data-test="product-sort-container"]')` (principal) o `page.locator('select.product_sort_container')` (fallback). **Sin `testIdAttribute` en la config (HITL).** |
 | Primer nombre | `inventoryItems.first().locator('[data-test="inventory-item-name"]')` |
 | Nombres / precios | `[data-test="inventory-item-name"]` / `[data-test="inventory-item-price"]` |
 | Detalle (título) | `[data-test="inventory-item-name"]` dentro del ítem (ancla de navegación) |
@@ -60,7 +60,7 @@ export function expectedPrices(option: SortOption): number[];    // oráculo num
 3. **Desempate A-Z (RF-5).** Se codifica como comparador secundario explícito `(a,b) => (a.precio - b.precio) || a.nombre.localeCompare(...)`. **Descartada** la estabilidad clásica: el AUT no es estable (`za → lohi` invierte Bolt/Test).
 4. **Asentamiento reactivo (RF-7).** Método POM `selectSortAndSettle(option)` que, tras `selectOption`, espera `expect(firstNameLocator).toHaveText(expectedNames(option)[0])` **antes** de serializar. **Descartado** leer con `allInnerTexts()` inmediatamente tras `toHaveValue()` (carrera de re-render).
 5. **Navegación cruzada delimitada (RF-6).** Solo Flujo A (`/cart.html` + `Continue Shopping`) y Flujo B (detalle + `Back to products`). **Descartado** `page.goBack()` y cualquier otro retorno.
-6. **Guardarraíl de locator.** Se habilita `getByTestId` vía `testIdAttribute: 'data-test'` (aditivo). **Descartado** el selector de atributo crudo inline en el test; se mantiene como fallback documentado `select.product_sort_container`.
+6. **Guardarraíl de locator.** El control se expone desde el POM con `page.locator('[data-test="product-sort-container"]')` (fallback documentado `select.product_sort_container`). **Descartado mutar `playwright.config.ts` (decisión HITL: no tocar infraestructura global)** y el selector inline en el test.
 7. **Reset de carrito vs sort.** Tras Flujo A se revalida sólo el criterio (`az`); la persistencia del carrito/badge pertenece a 003/004 y no se re-testea.
 
 ## 6. Estrategia de Pruebas Playwright
@@ -74,7 +74,7 @@ export function expectedPrices(option: SortOption): number[];    // oráculo num
 | TC-5 | RF-5 | `selectSort('za')` → `selectSortAndSettle('lohi')`: par `$15.99` = `['Sauce Labs Bolt T-Shirt','Test.allTheThings() T-Shirt (Red)']`; repetir con `hilo`. |
 | TC-6 | RF-6 | `selectSort('za')`; `reload()` → valor `az` + primer ítem `expectedNames('az')[0]`; repetir para Flujo A y Flujo B. |
 | TC-7 | RF-7 | Para los 4 criterios: tras `selectOption`, el primer ítem del DOM coincide con `expectedNames(option)[0]` antes de serializar (sin lectura stale). |
-| TC-8 | RF-8 | El control se localiza vía `getByTestId`/fallback POM; `npm run lint:determinism` = 0 sleeps; ausencia de serialización sin aserción previa (revisión estructural). |
+| TC-8 | RF-8 | El control se localiza vía el locator del POM (`[data-test="product-sort-container"]` / `select.product_sort_container`); `npm run lint:determinism` = 0 sleeps; ausencia de serialización sin aserción previa (revisión estructural). |
 
 **Comandos:** `npx playwright test tests/sort.spec.ts --project=chromium`, `npm run lint:determinism`, `npm run test:all`.
 
@@ -108,7 +108,7 @@ export function expectedPrices(option: SortOption): number[];    // oráculo num
 | Ítem | Riesgo | Mitigación |
 |---|---|---|
 | Colación `en` vs AUT | Divergencia si el AUT cambiara de names/punctuación | Oráculo pinned; datos dorados fijos; fallará explícitamente si cambia el corpus |
-| `getByTestId` | Requiere `testIdAttribute` no presente hoy | Añadir `testIdAttribute: 'data-test'` (aditivo) + fallback `select.product_sort_container` |
+| Locator del control | Sin `testIdAttribute`, `getByTestId` no es utilizable | Usar `page.locator('[data-test="product-sort-container"]')` / `select.product_sort_container` desde el POM; no se muta la config (HITL) |
 | Flujo B (detalle) | Selector de regreso `back-to-products` | Esperar URL `/inventory.html` + `headerTitle` visible |
 | Cambios a `inventory.page.ts` | Romper 001–004 | Cambios estrictamente aditivos; no tocar firmas existentes |
 | RF-5 = 1 sola pareja de empate | Invariante acotada al corpus actual | Documentar `TIE_PRICE = 15.99`; el test falla si el corpus cambia |
@@ -117,7 +117,7 @@ export function expectedPrices(option: SortOption): number[];    // oráculo num
 
 - [ ] `types/sort.types.ts` con `SortOption`, `GOLDEN_PRODUCTS` y oráculos puros (sin `any`).
 - [ ] `inventory.page.ts` extendido (aditivo) con control semántico y `selectSortAndSettle`.
-- [ ] `testIdAttribute: 'data-test'` añadido a `playwright.config.ts` (retrocompatible).
+- [ ] `playwright.config.ts` intacto; locator del control resuelto en el POM vía `[data-test="product-sort-container"]` / `select.product_sort_container`.
 - [ ] `tests/sort.spec.ts` cubriendo RF-1 a RF-8 (TC-1 a TC-8).
 - [ ] Matriz RF → test 1:1 verificada, sin re-testear UI elemental de 003.
 - [ ] `lint:determinism` limpio (0 sleeps) y `npm run test:all` en verde (001..005).

@@ -10,14 +10,14 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
 
 ## Fase 0 — Tipos y contratos
 
-- [ ] **T1. Crear `types/sort.types.ts` con contratos y oráculos puros** RF-1, RF-2, RF-3, RF-4, RF-5
+- [x] **T1. Crear `types/sort.types.ts` con contratos y oráculos puros** RF-1, RF-2, RF-3, RF-4, RF-5
   Definir `SortOption = 'az' | 'za' | 'lohi' | 'hilo'`, `GoldenProduct`, `GOLDEN_PRODUCTS` (los 6 productos fijos), `TIE_PRICE = 15.99`, el comparador `localeCompareEn` (`'en'`, `{ sensitivity: 'variant' }`) y las funciones puras `expectedNames(option)` / `expectedPrices(option)` con desempate A-Z explícito. Sin dependencia del DOM ni de Playwright.
   Hecho cuando: `npx tsc --noEmit` compila sin `any`, y `expectedNames('lohi')[2..3] === ['Sauce Labs Bolt T-Shirt','Test.allTheThings() T-Shirt (Red)']`.
 
 ## Fase 1 — Extensión POM aditiva
 
 - [ ] **T2. Extender `pages/inventory.page.ts` y habilitar locator semántico** RF-6, RF-7, RF-8
-  Añadir de forma **aditiva**: control de orden vía `page.getByTestId('product-sort-container')` (con `testIdAttribute: 'data-test'` añadido a `playwright.config.ts`), fallback `page.locator('select.product_sort_container')`, lectura de valor del `<select>`, el método reactivo `selectSortAndSettle(option)` que espera el asentamiento del primer ítem (`expect(firstName).toHaveText(expectedNames(option)[0])`) y los helpers de navegación `openProductDetail(name)` / `goBackToProducts()`. Conservar intactos todos los locators y métodos actuales (001–004).
+  Añadir de forma **aditiva**: control de orden vía `page.locator('[data-test="product-sort-container"]')` (fallback `page.locator('select.product_sort_container')`; **NO se modifica `playwright.config.ts`** por decisión HITL), lectura de valor del `<select>`, el método reactivo `selectSortAndSettle(option)` que espera el asentamiento del primer ítem (`expect(firstName).toHaveText(expectedNames(option)[0])`) y los helpers de navegación `openProductDetail(name)` / `goBackToProducts()`. Conservar intactos todos los locators y métodos actuales (001–004).
   Hecho cuando: `npm run test:all` sigue en verde para las suites 001–004 y `npm run lint:determinism` reporta 0 sleeps.
 
 ## Fase 2 — Pruebas E2E (mapeo 1:1 RF-1..RF-8)
