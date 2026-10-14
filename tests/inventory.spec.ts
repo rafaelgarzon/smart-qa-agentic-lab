@@ -81,4 +81,25 @@ test.describe('Spec 003: Inventario SauceDemo', () => {
     expect(prices).toHaveLength(EXPECTED_PRODUCT_COUNT);
     expect(prices).toEqual([...prices].sort((a, b) => b - a));
   });
+
+  test('TC-6 RF-6: ordenamiento numérico determinista y estable ante empates de precio', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    await inventoryPage.selectSort('priceAsc');
+    const firstPass = await inventoryPage.getProducts();
+
+    await inventoryPage.selectSort('priceDesc');
+    await inventoryPage.selectSort('priceAsc');
+    const secondPass = await inventoryPage.getProducts();
+
+    const priceCounts = new Map<number, number>();
+    firstPass.forEach((product) => priceCounts.set(product.price, (priceCounts.get(product.price) ?? 0) + 1));
+    const tiedPrices = [...priceCounts.values()].filter((count) => count > 1);
+    expect(tiedPrices.length).toBeGreaterThan(0);
+
+    expect(secondPass.map((product) => product.name)).toEqual(firstPass.map((product) => product.name));
+    expect(secondPass.map((product) => product.price)).toEqual(firstPass.map((product) => product.price));
+  });
 });

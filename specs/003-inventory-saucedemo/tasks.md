@@ -29,7 +29,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
 - [x] **T7. TC-4/TC-5 orden por precio low→high y high→low.** RF-4, RF-5.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: los precios numéricos coinciden con el `sort` esperado.
-- [ ] **T8. TC-6 estabilidad determinista ante empates de precio (`$15.99`).** RF-6.
+- [x] **T8. TC-6 estabilidad determinista ante empates de precio (`$15.99`).** RF-6.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: dos pasadas consecutivas del mismo criterio producen secuencia de nombres idéntica.
 - [ ] **T9. TC-7 persistencia de carrito y badge tras encadenar orden + `reload()`.** RF-7.
