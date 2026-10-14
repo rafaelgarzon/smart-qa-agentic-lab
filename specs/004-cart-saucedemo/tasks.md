@@ -38,7 +38,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
   - Hecho cuando: el `CartItem` capturado antes de remover coincide campo a campo con el ítem que permanece tras la operación.
 
 ## Fase 3: Quality Gate y Auditoría Final (20 min)
-- [ ] **T10. Verificación de determinismo y regresión completa sin romper 001/002/003.** RF-11.
+- [x] **T10. Verificación de determinismo y regresión completa sin romper 001/002/003.** RF-11.
   - Archivos: todo el repo
   - Hecho cuando: `npm run lint:determinism` reporta 0 sleeps y `npm run test:all` pasa en verde en Chromium sin regresión en `auth.spec.ts`, `checkout.spec.ts` ni `inventory.spec.ts`.
 
