@@ -7,7 +7,7 @@
     "triage": "opencode run /triage",
     "lint:determinism": "git grep -n 'waitForTimeout' pages/ tests/ && exit 1 || echo 'Determinismo garantizado: 0 sleeps'",
     "test": "playwright test tests/auth.spec.ts --project=chromium",
-    "test:faults": "playwright test tests/faults/ --project=chromium",
+    "test:faults": "playwright test --config=playwright.faults.config.ts",
     "test:all": "playwright test --project=chromium"
   },
   "keywords": [],
