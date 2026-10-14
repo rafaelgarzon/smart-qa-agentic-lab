@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/test-fixtures';
-import { expectedNames, expectedPrices, localeCompareEn } from '../types/sort.types';
+import { TIE_PRICE, expectedNames, expectedPrices, localeCompareEn } from '../types/sort.types';
 
 test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
   test.beforeEach(async ({ page, loginPage }) => {
@@ -64,6 +64,27 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
 
     for (let index = 1; index < prices.length; index++) {
       expect(prices[index - 1]).toBeGreaterThanOrEqual(prices[index]);
+    }
+  });
+
+  test('TC-5 RF-5: los empates de precio ($15.99) se desempatan en orden alfabético ascendente determinista', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    for (const option of ['lohi', 'hilo'] as const) {
+      await inventoryPage.selectSortAndSettle('za');
+      await inventoryPage.selectSortAndSettle(option);
+      await expect(inventoryPage.sortDropdown).toHaveValue(option);
+
+      const names = await inventoryPage.getItemNames();
+      const prices = await inventoryPage.getItemPrices();
+      const tiedNames = names.filter((_, index) => prices[index] === TIE_PRICE);
+
+      expect(tiedNames).toEqual([
+        'Sauce Labs Bolt T-Shirt',
+        'Test.allTheThings() T-Shirt (Red)',
+      ]);
     }
   });
 });

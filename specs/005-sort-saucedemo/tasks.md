@@ -38,7 +38,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   `selectSortAndSettle('hilo')`; `toEqual(expectedPrices('hilo'))`; monótona no creciente.
   Hecho cuando: el test pasa en Chromium.
 
-- [ ] **T7. TC-5 — RF-5: desempate A-Z determinista ante `$15.99`** RF-5
+- [x] **T7. TC-5 — RF-5: desempate A-Z determinista ante `$15.99`** RF-5
   `selectSort('za')` y luego `selectSortAndSettle('lohi')`: el par `$15.99` debe ser `['Sauce Labs Bolt T-Shirt','Test.allTheThings() T-Shirt (Red)']`; repetir la secuencia `za → hilo`.
   Hecho cuando: ambas secuencias fijan el empate en A-Z y el test falla si se invierte.
 
