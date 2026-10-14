@@ -1,6 +1,6 @@
 # Tareas: Spec 003 — Inventario SauceDemo
 
-Estado: pendiente
+Estado: completado
 Referencia: specs/003-inventory-saucedemo/plan.md
 
 ## Fase 0: Andamiaje y Modelado de Tipos (15 min)
@@ -37,6 +37,6 @@ Referencia: specs/003-inventory-saucedemo/plan.md
   - Hecho cuando: estado "Remove" y badge constantes tras 4 reordenamientos y recarga.
 
 ## Fase 3: Quality Gate y Auditoría Final (15 min)
-- [ ] **T10. Verificación de determinismo y regresión completa.** RF-8.
+- [x] **T10. Verificación de determinismo y regresión completa.** RF-8.
   - Archivos: todo el repo
   - Hecho cuando: `npm run lint:determinism` reporta 0 sleeps y `npm run test:all` pasa en verde en Chromium.
