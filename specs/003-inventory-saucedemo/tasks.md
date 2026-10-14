@@ -9,7 +9,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
   - Hecho cuando: compila con `strict` sin `any` y exporta los tipos y etiquetas de ordenamiento.
 
 ## Fase 1: Page Object Model (35 min)
-- [ ] **T2. Extender `InventoryPage` para lectura de datos del catálogo.** RF-1.
+- [x] **T2. Extender `InventoryPage` para lectura de datos del catálogo.** RF-1.
   - Archivos: `pages/inventory.page.ts`
   - Hecho cuando: `getProductNames()`, `getProductDescriptions()`, `getProductPrices()` y `getItemsCount()` retornan datos reales del DOM tipados.
 - [ ] **T3. Extender `InventoryPage` con control de orden y secuencia.** RF-2, RF-3, RF-4, RF-5.
