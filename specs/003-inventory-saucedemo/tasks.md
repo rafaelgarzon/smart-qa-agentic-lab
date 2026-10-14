@@ -20,7 +20,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
   - Hecho cuando: expone `getItemButtonByName()`, `getCartBadgeText()` y `reload()` sin sleeps.
 
 ## Fase 2: Implementación de Pruebas E2E (40 min)
-- [ ] **T5. TC-1 integridad del catálogo (6 ítems con nombre, descripción, precio `$XX.YY` y botón habilitado).** RF-1.
+- [x] **T5. TC-1 integridad del catálogo (6 ítems con nombre, descripción, precio `$XX.YY` y botón habilitado).** RF-1.
   - Archivos: `tests/inventory.spec.ts`, `fixtures/test-fixtures.ts`
   - Hecho cuando: `npx playwright test tests/inventory.spec.ts -g "integridad" --project=chromium` en verde.
 - [ ] **T6. TC-2/TC-3 orden por defecto A-Z y Name Z-A.** RF-2, RF-3.
