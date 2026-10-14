@@ -30,7 +30,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   `selectSortAndSettle('za')`; `toEqual(expectedNames('za'))`; monótona no creciente bajo `localeCompareEn`.
   Hecho cuando: el test pasa en Chromium.
 
-- [ ] **T5. TC-3 — RF-3: oráculo numérico low→high y monotonicidad** RF-3
+- [x] **T5. TC-3 — RF-3: oráculo numérico low→high y monotonicidad** RF-3
   `selectSortAndSettle('lohi')`; precios parseados con `^\$(\d+\.\d{2})$` + `parseFloat`; `toEqual(expectedPrices('lohi'))` (igualdad estricta); monótona no decreciente.
   Hecho cuando: el test pasa en Chromium.
 

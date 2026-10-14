@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures/test-fixtures';
-import { expectedNames, localeCompareEn } from '../types/sort.types';
+import { expectedNames, expectedPrices, localeCompareEn } from '../types/sort.types';
 
 test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
   test.beforeEach(async ({ page, loginPage }) => {
@@ -34,6 +34,21 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
 
     for (let index = 1; index < names.length; index++) {
       expect(localeCompareEn(names[index - 1], names[index])).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  test('TC-3 RF-3: el criterio "Price (low to high)" es idéntico al oráculo numérico y monótono no decreciente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+    await inventoryPage.selectSortAndSettle('lohi');
+    await expect(inventoryPage.sortDropdown).toHaveValue('lohi');
+
+    const prices = await inventoryPage.getItemPrices();
+    expect(prices).toEqual(expectedPrices('lohi'));
+
+    for (let index = 1; index < prices.length; index++) {
+      expect(prices[index - 1]).toBeLessThanOrEqual(prices[index]);
     }
   });
 });
