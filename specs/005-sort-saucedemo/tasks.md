@@ -34,7 +34,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   `selectSortAndSettle('lohi')`; precios parseados con `^\$(\d+\.\d{2})$` + `parseFloat`; `toEqual(expectedPrices('lohi'))` (igualdad estricta); monótona no decreciente.
   Hecho cuando: el test pasa en Chromium.
 
-- [ ] **T6. TC-4 — RF-4: oráculo numérico high→low y monotonicidad** RF-4
+- [x] **T6. TC-4 — RF-4: oráculo numérico high→low y monotonicidad** RF-4
   `selectSortAndSettle('hilo')`; `toEqual(expectedPrices('hilo'))`; monótona no creciente.
   Hecho cuando: el test pasa en Chromium.
 

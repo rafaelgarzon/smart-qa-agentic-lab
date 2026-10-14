@@ -51,4 +51,19 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
       expect(prices[index - 1]).toBeLessThanOrEqual(prices[index]);
     }
   });
+
+  test('TC-4 RF-4: el criterio "Price (high to low)" es idéntico al oráculo numérico y monótono no creciente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+    await inventoryPage.selectSortAndSettle('hilo');
+    await expect(inventoryPage.sortDropdown).toHaveValue('hilo');
+
+    const prices = await inventoryPage.getItemPrices();
+    expect(prices).toEqual(expectedPrices('hilo'));
+
+    for (let index = 1; index < prices.length; index++) {
+      expect(prices[index - 1]).toBeGreaterThanOrEqual(prices[index]);
+    }
+  });
 });
