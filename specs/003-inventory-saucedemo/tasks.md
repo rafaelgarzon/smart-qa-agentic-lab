@@ -15,7 +15,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
 - [x] **T3. Extender `InventoryPage` con control de orden y secuencia.** RF-2, RF-3, RF-4, RF-5.
   - Archivos: `pages/inventory.page.ts`
   - Hecho cuando: `selectSort(label)` aplica el criterio y los getters reflejan el nuevo orden del DOM.
-- [ ] **T4. Extender `InventoryPage` con estado de botón por ítem, badge y recarga.** RF-7.
+- [x] **T4. Extender `InventoryPage` con estado de botón por ítem, badge y recarga.** RF-7.
   - Archivos: `pages/inventory.page.ts`
   - Hecho cuando: expone `getItemButtonByName()`, `getCartBadgeText()` y `reload()` sin sleeps.
 

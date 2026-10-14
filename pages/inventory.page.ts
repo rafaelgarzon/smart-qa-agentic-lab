@@ -77,6 +77,25 @@ export class InventoryPage {
     await expect(this.sortSelect).toHaveValue(SORT_OPTIONS[option]);
   }
 
+  getItemLocatorByName(name: string): Locator {
+    const nameLocator = this.page.locator('[data-test="inventory-item-name"]').getByText(name, { exact: true });
+    return this.inventoryItems.filter({ has: nameLocator });
+  }
+
+  getItemButtonByName(name: string): Locator {
+    return this.getItemLocatorByName(name).locator('button.btn_inventory');
+  }
+
+  async getCartBadgeText(): Promise<string> {
+    await expect(this.shoppingCartBadge).toBeVisible();
+    return await this.shoppingCartBadge.innerText();
+  }
+
+  async reload(): Promise<void> {
+    await this.page.reload();
+    await this.waitForInventoryLoaded();
+  }
+
   async waitForInventoryLoaded(): Promise<void> {
     await expect(this.headerTitle).toBeVisible();
     await expect(this.headerTitle).toHaveText('Products');
