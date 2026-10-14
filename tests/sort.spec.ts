@@ -123,4 +123,21 @@ test.describe('Spec 005: Ordenamiento Algorítmico SauceDemo', () => {
       expect(names[0]).toBe(expectedNames(option)[0]);
     }
   });
+
+  test('TC-8 RF-8: el control de orden expone el selector semántico [data-test] y sus 4 opciones reactivamente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    // Selector semántico vía atributo data-test (sin testIdAttribute en playwright.config.ts).
+    await expect(inventoryPage.sortDropdown).toBeVisible();
+    await expect(inventoryPage.sortDropdown).toBeEnabled();
+    await expect(inventoryPage.sortDropdown).toHaveAttribute('data-test', 'product-sort-container');
+
+    const options = inventoryPage.sortDropdown.locator('option');
+    await expect(options).toHaveCount(4);
+
+    const values = await options.evaluateAll((nodes) => nodes.map((node) => node.getAttribute('value')));
+    expect(values).toEqual(['az', 'za', 'lohi', 'hilo']);
+  });
 });

@@ -50,7 +50,7 @@ Convención: una tarea por sesión de implementación (máx. 20-30 min), tests p
   Para los 4 criterios, invocar `selectSortAndSettle` y confirmar que el primer ítem serializado coincide con `expectedNames(option)[0]` (sin lectura stale ni curso de carrera).
   Hecho cuando: el test pasa de forma repetible (ejecución consecutiva sin flakiness).
 
-- [ ] **T10. TC-8 — RF-8: guardarraíles de locator y determinismo** RF-8
+- [x] **T10. TC-8 — RF-8: guardarraíles de locator y determinismo** RF-8
   Verificar que el control se localiza vía el locator semántico expuesto por el POM y que no hay serialización sin aserción reactiva previa; asegurar 0 usos de `waitForTimeout`/`sleep` en `tests/sort.spec.ts`.
   Hecho cuando: `npm run lint:determinism` reporta 0 sleeps y el test estructural pasa.
 
