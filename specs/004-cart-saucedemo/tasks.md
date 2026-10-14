@@ -21,7 +21,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T4. TC-1 + TC-2 integridad de ítems y cantidad invariante QTY.** RF-1, RF-2.
   - Archivos: `tests/cart.spec.ts`, `fixtures/test-fixtures.ts`
   - Hecho cuando: `npx playwright test tests/cart.spec.ts -g "integridad|QTY" --project=chromium` en verde; cada ítem visible con nombre no vacío, descripción, precio `$XX.YY` y Remove habilitado; cada `item-quantity` con `toHaveText('1')`.
-- [ ] **T5. TC-3 + TC-8 remove decrementa badge y eliminación múltiple secuencial (3→2→1).** RF-3, RF-8.
+- [x] **T5. TC-3 + TC-8 remove decrementa badge y eliminación múltiple secuencial (3→2→1).** RF-3, RF-8.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: tras cada remoción el conteo y el badge quedan sincronizados reactivamente en cada paso, sin desfases.
 - [ ] **T6. TC-4 + TC-7 estado de carrito vacío por vaciamiento total y por deep-link a `/cart.html`.** RF-4, RF-7.

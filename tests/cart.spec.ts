@@ -67,4 +67,60 @@ test.describe('Spec 004: Gestión del Carrito SauceDemo', () => {
     const quantities = await cartPage.getItemQuantities();
     expect(quantities).toEqual(Array(selectedNames.length).fill(CART_QUANTITY));
   });
+
+  test('TC-3 RF-3: Remove excluye el ítem y decrementa el badge exactamente en una unidad', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 2);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length));
+
+    const [removedName] = selectedNames;
+    await cartPage.removeItemByName(removedName);
+
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length - 1);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length - 1));
+
+    const remainingNames = await cartPage.getItemNames();
+    expect(remainingNames).not.toContain(removedName);
+  });
+
+  test('TC-8 RF-8: eliminación múltiple secuencial mantiene el badge sincronizado 3→2→1', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 3);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length));
+
+    let expectedCount = selectedNames.length;
+    for (const name of selectedNames) {
+      await cartPage.removeItemByName(name);
+      expectedCount -= 1;
+
+      await expect(cartPage.cartItems).toHaveCount(expectedCount);
+      if (expectedCount > 0) {
+        await expect(cartPage.shoppingCartBadge).toHaveText(String(expectedCount));
+      } else {
+        await expect(cartPage.shoppingCartBadge).toHaveCount(0);
+      }
+    }
+  });
 });
