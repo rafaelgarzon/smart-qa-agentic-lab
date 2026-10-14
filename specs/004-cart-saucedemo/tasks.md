@@ -27,7 +27,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T6. TC-4 + TC-7 estado de carrito vacío por vaciamiento total y por deep-link a `/cart.html`.** RF-4, RF-7.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: con carrito vacío `cartItems` con `toHaveCount(0)` y badge con `toHaveCount(0)`, sin errores ni estados inconsistentes.
-- [ ] **T7. TC-5 + TC-9 `Continue Shopping` preserva badge y regreso al inventario restaura "Add to cart".** RF-5, RF-9.
+- [x] **T7. TC-5 + TC-9 `Continue Shopping` preserva badge y regreso al inventario restaura "Add to cart".** RF-5, RF-9.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: la URL vuelve a `/inventory.html` con badge intacto y el ítem removido muestra acción `/add to cart/i`.
 - [ ] **T8. TC-6 persistencia del carrito restante y badge tras `reload()`.** RF-6.

@@ -162,4 +162,60 @@ test.describe('Spec 004: Gestión del Carrito SauceDemo', () => {
     await expect(cartPage.cartItems).toHaveCount(0);
     await expect(cartPage.shoppingCartBadge).toHaveCount(0);
   });
+
+  test('TC-5 RF-5: Continue Shopping regresa a /inventory.html preservando el badge con los ítems restantes', async ({
+    page,
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    // Precondición: 2 ítems para remover uno y conservar el otro con el badge intacto.
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 2);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length));
+
+    // Se elimina un único ítem: permanece exactamente uno en el carrito.
+    const [removedName] = selectedNames;
+    await cartPage.removeItemByName(removedName);
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length - 1);
+    await expect(cartPage.shoppingCartBadge).toHaveText('1');
+
+    await cartPage.clickContinueShopping();
+
+    await expect(page).toHaveURL(/inventory\.html/);
+    await expect(cartPage.shoppingCartBadge).toHaveText('1');
+  });
+
+  test('TC-9 RF-9: tras eliminar un ítem del carrito, el inventario restaura la acción "Add to cart" y oculta el badge', async ({
+    page,
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    const [targetName] = await inventoryPage.getProductNames();
+    await inventoryPage.getItemButtonByName(targetName).click();
+    await expect(inventoryPage.shoppingCartBadge).toHaveText('1');
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await cartPage.removeItemByName(targetName);
+    await cartPage.verifyEmptyCart();
+
+    await cartPage.clickContinueShopping();
+
+    await expect(page).toHaveURL(/inventory\.html/);
+    await inventoryPage.waitForInventoryLoaded();
+
+    // El producto eliminado vuelve a exponer su acción inicial y el badge ya no existe.
+    await expect(inventoryPage.getItemButtonByName(targetName)).toHaveText(/add to cart/i);
+    await expect(inventoryPage.shoppingCartBadge).toHaveCount(0);
+  });
 });
