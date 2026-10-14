@@ -26,7 +26,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
 - [x] **T6. TC-2/TC-3 orden por defecto A-Z y Name Z-A.** RF-2, RF-3.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: la secuencia del DOM iguala la esperada en ambos sentidos.
-- [ ] **T7. TC-4/TC-5 orden por precio low→high y high→low.** RF-4, RF-5.
+- [x] **T7. TC-4/TC-5 orden por precio low→high y high→low.** RF-4, RF-5.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: los precios numéricos coinciden con el `sort` esperado.
 - [ ] **T8. TC-6 estabilidad determinista ante empates de precio (`$15.99`).** RF-6.

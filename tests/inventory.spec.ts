@@ -55,4 +55,30 @@ test.describe('Spec 003: Inventario SauceDemo', () => {
     const names = await inventoryPage.getProductNames();
     expect(names).toEqual([...ascending].sort().reverse());
   });
+
+  test('TC-4 RF-4: el criterio "Price (low to high)" reordena por precio numérico ascendente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    await inventoryPage.selectSort('priceAsc');
+    await expect(inventoryPage.sortSelect).toHaveValue(SORT_OPTIONS.priceAsc);
+
+    const prices = await inventoryPage.getProductPrices();
+    expect(prices).toHaveLength(EXPECTED_PRODUCT_COUNT);
+    expect(prices).toEqual([...prices].sort((a, b) => a - b));
+  });
+
+  test('TC-5 RF-5: el criterio "Price (high to low)" reordena por precio numérico descendente', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    await inventoryPage.selectSort('priceDesc');
+    await expect(inventoryPage.sortSelect).toHaveValue(SORT_OPTIONS.priceDesc);
+
+    const prices = await inventoryPage.getProductPrices();
+    expect(prices).toHaveLength(EXPECTED_PRODUCT_COUNT);
+    expect(prices).toEqual([...prices].sort((a, b) => b - a));
+  });
 });
