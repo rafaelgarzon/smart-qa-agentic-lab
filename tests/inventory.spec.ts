@@ -102,4 +102,30 @@ test.describe('Spec 003: Inventario SauceDemo', () => {
     expect(secondPass.map((product) => product.name)).toEqual(firstPass.map((product) => product.name));
     expect(secondPass.map((product) => product.price)).toEqual(firstPass.map((product) => product.price));
   });
+
+  test('TC-7 RF-7: persistencia del ítem y del badge tras encadenar ordenamientos y recargar', async ({
+    inventoryPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    const productName = 'Sauce Labs Backpack';
+    const addButton = inventoryPage.getItemButtonByName(productName);
+    await expect(addButton).toHaveText(/add to cart/i);
+    await addButton.click();
+    await expect(inventoryPage.getItemButtonByName(productName)).toHaveText(/remove/i);
+
+    const badge = await inventoryPage.getCartBadgeText();
+    expect(badge).toBe('1');
+
+    const sequence = ['nameDesc', 'priceAsc', 'priceDesc', 'nameAsc'] as const;
+    for (const option of sequence) {
+      await inventoryPage.selectSort(option);
+      await expect(inventoryPage.getItemButtonByName(productName)).toHaveText(/remove/i);
+      expect(await inventoryPage.getCartBadgeText()).toBe(badge);
+    }
+
+    await inventoryPage.reload();
+    await expect(inventoryPage.getItemButtonByName(productName)).toHaveText(/remove/i);
+    expect(await inventoryPage.getCartBadgeText()).toBe(badge);
+  });
 });

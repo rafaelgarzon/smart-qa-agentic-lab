@@ -32,7 +32,7 @@ Referencia: specs/003-inventory-saucedemo/plan.md
 - [x] **T8. TC-6 estabilidad determinista ante empates de precio (`$15.99`).** RF-6.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: dos pasadas consecutivas del mismo criterio producen secuencia de nombres idéntica.
-- [ ] **T9. TC-7 persistencia de carrito y badge tras encadenar orden + `reload()`.** RF-7.
+- [x] **T9. TC-7 persistencia de carrito y badge tras encadenar orden + `reload()`.** RF-7.
   - Archivos: `tests/inventory.spec.ts`
   - Hecho cuando: estado "Remove" y badge constantes tras 4 reordenamientos y recarga.
 
