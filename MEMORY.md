@@ -2,7 +2,7 @@
 
 ## Estado del Repositorio
 - Fecha: 2026-10-14
-- Rama: `main` (spec 003 mergeada y validada; working tree limpio).
+- Rama: `feature/004-cart-spec` (spec 004 cerrada formalmente; working tree limpio).
 - Metodología: Spec-Driven Development (SDD) con arnés agéntico y control HitL.
 
 ## Especificaciones Consolidadas
@@ -22,10 +22,20 @@
   - RF-7: Persistencia de ítem y badge tras encadenar ordenamientos y `reload()`.
   - RF-8: Determinismo transversal verificado.
   - POM extendido: `pages/inventory.page.ts`; tipos: `types/inventory.types.ts`.
+- `specs/004-cart-saucedemo`: 100% cerrada (RF-1 a RF-11 cubiertos, 10/10 passed en Chromium).
+  - Integridad de ítems del carrito (nombre no vacío, descripción, precio `$XX.YY`, Remove habilitado) y QTY invariante `1`.
+  - Eliminación con decremento reactivo del badge; vaciado total con badge oculto (`toHaveCount(0)`).
+  - `Continue Shopping` preserva el badge y regresa a `/inventory.html`; consistencia cruzada con el catálogo (restaura "Add to cart").
+  - Persistencia de ítems restantes y badge tras `reload()`; deep-link a `/cart.html` con carrito vacío válido.
+  - Inmutabilidad de ítems no removidos (nombre, descripción, precio, QTY) y determinismo transversal.
+  - Capacidades incorporadas:
+    - `types/cart.types.ts`: contratos tipados (`CartItem`) e invariante `CART_QUANTITY = 1` (reexport de `PRICE_PATTERN`).
+    - `pages/cart.page.ts`: extensión aditiva con getters tipados, mutación reactiva y navegación (retrocompatible con spec 002).
+    - `tests/cart.spec.ts`: 10 tests E2E cubriendo RF-1 a RF-11.
 
 ## Suite de Regresión Global
-- `npm run test:all`: 15 passed en Chromium (auth 5 + checkout 3 + inventory 7).
-- `npm run lint:determinism`: 0 pausas fijas en el código.
+- `npm run test:all`: 25 passed en Chromium (auth 5 + checkout 3 + inventory 7 + cart 10) — specs 001 a 004.
+- `npm run lint:determinism`: 0 sleeps / 0 `waitForTimeout` en todo el arnés.
 
 ## Capacidades de Calibración RCA
 - `FAULT-01`: `SELECTOR_DESFASADO` (100% de precisión).
