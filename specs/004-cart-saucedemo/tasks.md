@@ -30,7 +30,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T7. TC-5 + TC-9 `Continue Shopping` preserva badge y regreso al inventario restaura "Add to cart".** RF-5, RF-9.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: la URL vuelve a `/inventory.html` con badge intacto y el ítem removido muestra acción `/add to cart/i`.
-- [ ] **T8. TC-6 persistencia del carrito restante y badge tras `reload()`.** RF-6.
+- [x] **T8. TC-6 persistencia del carrito restante y badge tras `reload()`.** RF-6.
   - Archivos: `tests/cart.spec.ts`
   - Hecho cuando: tras recargar se conservan exactamente los ítems restantes (mismos nombres), el badge se mantiene y el ítem removido no reaparece.
 - [ ] **T9. TC-10 inmutabilidad de nombres, descripción, precio y QTY de los ítems no removidos.** RF-10.

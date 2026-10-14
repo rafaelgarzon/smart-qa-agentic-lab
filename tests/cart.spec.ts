@@ -218,4 +218,43 @@ test.describe('Spec 004: Gestión del Carrito SauceDemo', () => {
     await expect(inventoryPage.getItemButtonByName(targetName)).toHaveText(/add to cart/i);
     await expect(inventoryPage.shoppingCartBadge).toHaveCount(0);
   });
+
+  test('TC-6 RF-6: la recarga del carrito conserva exactamente los ítems restantes, mantiene el badge y no resucita el ítem removido', async ({
+    inventoryPage,
+    cartPage,
+  }) => {
+    await inventoryPage.waitForInventoryLoaded();
+
+    // Precondición: 2 ítems para remover uno y verificar la persistencia del que permanece.
+    const selectedNames = (await inventoryPage.getProductNames()).slice(0, 2);
+    for (const name of selectedNames) {
+      await inventoryPage.getItemButtonByName(name).click();
+    }
+
+    await inventoryPage.goToCart();
+    await cartPage.verifyCartLoaded();
+    await expect(cartPage.cartItems).toHaveCount(selectedNames.length);
+    await expect(cartPage.shoppingCartBadge).toHaveText(String(selectedNames.length));
+
+    // Se elimina un único ítem antes de recargar; el restante queda en el carrito.
+    const [removedName, remainingName] = selectedNames;
+    await cartPage.removeItemByName(removedName);
+    await expect(cartPage.cartItems).toHaveCount(1);
+    await expect(cartPage.shoppingCartBadge).toHaveText('1');
+
+    // Recarga forzada de la vista del carrito.
+    await cartPage.reload();
+
+    // El ítem restante persiste intacto y el badge se mantiene estable.
+    await expect(cartPage.cartItems).toHaveCount(1);
+    await expect(cartPage.shoppingCartBadge).toHaveText('1');
+
+    const remainingNames = await cartPage.getItemNames();
+    expect(remainingNames).toHaveLength(1);
+    expect(remainingNames).toContain(remainingName);
+
+    // El ítem removido no reaparece ni en la lista ni mediante su locator directo.
+    expect(remainingNames).not.toContain(removedName);
+    await expect(cartPage.getItemLocatorByName(removedName)).toHaveCount(0);
+  });
 });
