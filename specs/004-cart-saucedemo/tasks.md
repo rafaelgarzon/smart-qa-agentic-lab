@@ -5,7 +5,7 @@ Referencia: specs/004-cart-saucedemo/plan.md
 Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 
 ## Fase 0: Andamiaje y Modelado de Tipos (20 min)
-- [ ] **T1. Crear `types/cart.types.ts` con `CART_QUANTITY = 1`, `interface CartItem` (name/description/price/quantity) y reutilización de `PRICE_PATTERN` desde `inventory.types.ts`.** RF-1, RF-2, RF-10.
+- [x] **T1. Crear `types/cart.types.ts` con `CART_QUANTITY = 1`, `interface CartItem` (name/description/price/quantity) y reutilización de `PRICE_PATTERN` desde `inventory.types.ts`.** RF-1, RF-2, RF-10.
   - Archivos: `types/cart.types.ts`
   - Hecho cuando: compila con `strict` sin `any` y exporta `CART_QUANTITY`, `CartItem` y el patrón de precio compartido.
 

@@ -1,7 +1,7 @@
 ---
 name: planner
 description: Agente de planificación SDD y arquitectura de pruebas. Analiza specs, resuelve ambigüedades y genera planes técnicos sin escribir código.
-mode: plan
+mode: subagent
 tools:
   read_file: true
   list_dir: true
