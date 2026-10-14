@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: Auditor de calidad y cumplimiento constitucional. Valida determinismo, estándares POM y consistencia de specs.
-mode: plan
+mode: subagent
 tools:
   read_file: true
   list_dir: true

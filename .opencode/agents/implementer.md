@@ -1,7 +1,7 @@
 ---
 name: implementer
 description: Agente de implementación técnica. Convierte tareas SDD en código ejecutable y pruebas Playwright deterministas.
-mode: build
+mode: subagent
 tools:
   read_file: true
   edit_file: true
