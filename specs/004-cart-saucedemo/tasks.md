@@ -13,7 +13,7 @@ Convención: tareas atómicas en orden de dependencia (20–30 min por tarea).
 - [x] **T2. Extender `CartPage` con lectura de datos del carrito (nombres, descripciones, precios parseados, QTY y `getItemLocatorByName`).** RF-1, RF-2, RF-10.
   - Archivos: `pages/cart.page.ts`
   - Hecho cuando: getters tipados (`CartItem[]`, `number[]`, `string[]`) y `getItemLocatorByName(name)` retornan datos reales del DOM con precio vía `PRICE_PATTERN` + `parseFloat`.
-- [ ] **T3. Extender `CartPage` con mutación y estado (remove por texto, badge, `continueShopping`, `reload` y validación de carrito vacío).** RF-3, RF-4, RF-5, RF-6, RF-8.
+- [x] **T3. Extender `CartPage` con mutación y estado (remove por texto, badge, `continueShopping`, `reload` y validación de carrito vacío).** RF-3, RF-4, RF-5, RF-6, RF-8.
   - Archivos: `pages/cart.page.ts`
   - Hecho cuando: expone `removeItemByName`, lectura de badge, `clickContinueShopping`, `reload` y `verifyEmptyCart` (badge con `toHaveCount(0)`) sin sleeps, conservando `title`, `cartItems`, `checkoutButton`, `verifyCartLoaded` y `proceedToCheckout` (retrocompatibilidad con 002).
 

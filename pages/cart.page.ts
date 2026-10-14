@@ -10,6 +10,8 @@ export class CartPage {
   readonly itemName: Locator;
   readonly itemDescription: Locator;
   readonly itemPrice: Locator;
+  readonly shoppingCartBadge: Locator;
+  readonly continueShoppingButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -20,6 +22,8 @@ export class CartPage {
     this.itemName = page.locator('[data-test="inventory-item-name"]');
     this.itemDescription = page.locator('[data-test="inventory-item-desc"]');
     this.itemPrice = page.locator('[data-test="inventory-item-price"]');
+    this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
+    this.continueShoppingButton = page.locator('[data-test="continue-shopping"]');
   }
 
   async verifyCartLoaded(): Promise<void> {
@@ -66,6 +70,47 @@ export class CartPage {
   getItemLocatorByName(name: string): Locator {
     const nameLocator = this.itemName.getByText(name, { exact: true });
     return this.cartItems.filter({ has: nameLocator });
+  }
+
+  /**
+   * Elimina un ítem del carrito por su nombre (RF-3, RF-8).
+   * El botón Remove se localiza por rol/texto dentro del ítem, sin acoplarse a slugs de producto.
+   * La eliminación se certifica reactivamente esperando a que el ítem desaparezca del DOM.
+   */
+  async removeItemByName(name: string): Promise<void> {
+    const item = this.getItemLocatorByName(name);
+    await item.getByRole('button', { name: /remove/i }).click();
+    await expect(item).toHaveCount(0);
+  }
+
+  /**
+   * Registra el carrito (RF-3, RF-8).
+   * El badge no se renderiza cuando el carrito está vacío; para ese estado usar `verifyEmptyCart`.
+   */
+  async getCartBadgeText(): Promise<string> {
+    await expect(this.shoppingCartBadge).toBeVisible();
+    return await this.shoppingCartBadge.innerText();
+  }
+
+  /** Vuelve al inventario conservando el estado del carrito (RF-5, RF-9). */
+  async clickContinueShopping(): Promise<void> {
+    await this.continueShoppingButton.click();
+    await expect(this.page).toHaveURL(/.*inventory\.html/);
+  }
+
+  /** Recarga la vista validando la persistencia del carrito por sesión (RF-6). */
+  async reload(): Promise<void> {
+    await this.page.reload();
+    await this.verifyCartLoaded();
+  }
+
+  /**
+   * Certifica el estado de carrito vacío (RF-4, RF-7).
+   * SauceDemo no renderiza el nodo del badge cuando está vacío, por eso se usa `toHaveCount(0)`.
+   */
+  async verifyEmptyCart(): Promise<void> {
+    await expect(this.cartItems).toHaveCount(0);
+    await expect(this.shoppingCartBadge).toHaveCount(0);
   }
 
   private parsePrice(text: string): number {
