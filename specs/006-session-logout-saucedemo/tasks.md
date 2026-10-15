@@ -9,7 +9,7 @@ Granularidad: **10 tareas atómicas secuenciales** (≤10), mapeo 1:1 RF↔TC co
 
 ## Fase 1 — Tipos y extensión POM
 
-- [ ] **T1. Crear `types/session.types.ts` y ampliar `types/messages.types.ts`** RF-1..RF-10
+- [x] **T1. Crear `types/session.types.ts` y ampliar `types/messages.types.ts`** RF-1..RF-10
   Definir contratos/constantes **sin DOM**: `SAUCEDEMO_ORIGIN`, `SAUCEDEMO_DOMAIN`, `SESSION_COOKIE_NAME='session-username'`, `SESSION_USER='standard_user'`, `PROTECTED_PATH='/inventory.html'`, `ROOT_URL_PATTERN=/^https:\/\/www\.saucedemo\.com\/?$/`, `ANALYTICS_STORAGE_KEYS=['backtrace-guid','backtrace-last-active']` y los helpers puros `findSessionCookie(cookies)` / `hasSessionCookie(cookies)`. Añadir de forma **aditiva** `SESSION_MESSAGES = { guardedRoute: "Epic sadface: You can only access '/inventory.html' when you are logged in." }` en `types/messages.types.ts` (conservar `LOGIN_ERROR_MESSAGES` intacto).
   Hecho cuando: `npx tsc --noEmit` compila sin `any` y `findSessionCookie([])` devuelve `undefined`.
 
