@@ -42,13 +42,15 @@ export class InventoryPage {
     this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
     this.shoppingCartLink = page.locator('[data-test="shopping-cart-link"]');
     this.backToProductsButton = page.locator('[data-test="back-to-products"]');
-    // Header / menú lateral (spec 006). `.bm-menu-wrap` y `#inventory_container` son CSS de
+    // Header / menú lateral (spec 006). `.bm-menu-wrap` y el marcador de inventario son de
     // último recurso justificados en spec.md §Selectores (nodo de `react-burger-menu` sin
-    // `data-test`/rol y raíz del layout privado, respectivamente).
+    // `data-test`/rol, respectivamente). El marcador de inventario usa `[data-test]` porque el
+    // `id="inventory_container"` está DUPLICADO en el DOM de SauceDemo (el `role="main"` y el grid),
+    // lo que provoca violación de strict mode; `[data-test="inventory-container"]` es único (§4).
     this.burgerButton = page.getByRole('button', { name: 'Open Menu' });
     this.menuPanel = page.locator('.bm-menu-wrap');
     this.logoutLink = page.locator('[data-test="logout-sidebar-link"]');
-    this.inventoryContainer = page.locator('#inventory_container');
+    this.inventoryContainer = page.locator('[data-test="inventory-container"]');
     this.errorBanner = page.locator('[data-test="error"]');
   }
 
@@ -186,12 +188,20 @@ export class InventoryPage {
     await expect(this.logoutLink).toBeInViewport({ ratio: 1 });
   }
 
+  /** Indica si el panel lateral está en estado abierto (`aria-hidden="false"`). Lectura puntual, 0 sleeps. */
+  private async isMenuOpen(): Promise<boolean> {
+    return (await this.menuPanel.getAttribute('aria-hidden')) === 'false';
+  }
+
   /**
-   * Ejecuta el logout (abriendo el menú) y espera el asentamiento en la vista de login (RF-3).
-   * 0 sleeps.
+   * Ejecuta el logout asegurando el menú abierto y espera el asentamiento en la vista de login (RF-3).
+   * Idempotente respecto al estado del menú: si ya está abierto (p. ej. tras `openMenuAndSettle()`),
+   * no reitera el clic en el burger (que estaría interceptado por el panel). 0 sleeps.
    */
   async logoutAndSettle(): Promise<void> {
-    await this.openMenuAndSettle();
+    if (!(await this.isMenuOpen())) {
+      await this.openMenuAndSettle();
+    }
     await this.logoutLink.click();
     await this.expectSettledAtLoginRoot();
   }

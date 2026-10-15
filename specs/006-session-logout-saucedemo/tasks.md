@@ -19,7 +19,7 @@ Granularidad: **10 tareas atómicas secuenciales** (≤10), mapeo 1:1 RF↔TC co
 
 ## Fase 2 — Pruebas E2E (mapeo incremental TC-1..TC-10)
 
-- [ ] **T3. TC-1 + TC-2 — RF-1 y RF-2: apertura del menú y criterio "menú abierto"** RF-1, RF-2
+- [x] **T3. TC-1 + TC-2 — RF-1 y RF-2: apertura del menú y criterio "menú abierto"** RF-1, RF-2
   En `tests/logout.spec.ts` (con `beforeEach` de login por UI): TC-1 invoca `openMenuAndSettle()` y confirma el panel abierto y el `logoutLink` actionable. TC-2 valida la **discriminación** del criterio: con el menú cerrado `logoutLink.isVisible() === true` pero `toBeInViewport({ ratio: 1 })` es falso; tras `openMenuAndSettle()` el AND es verdadero. Sin sleeps.
   Hecho cuando: ambos tests pasan en Chromium y TC-2 falla si se sustituye por `toBeVisible()`.
 
