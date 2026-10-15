@@ -1,8 +1,8 @@
 # MEMORY - Smart QA Agentic Lab
 
 ## Estado del Repositorio
-- Fecha: 2026-10-14
-- Rama: `feature/005-sort-spec` (spec 005 cerrada formalmente; working tree limpio).
+- Fecha: 2026-10-15
+- Rama: `feature/006-logout-spec` (spec 006 cerrada formalmente; working tree limpio).
 - Metodología: Spec-Driven Development (SDD) con arnés agéntico y control HitL.
 
 ## Especificaciones Consolidadas
@@ -43,10 +43,26 @@
     - `types/sort.types.ts`: contratos y oráculos puros (`SortOption`, `GOLDEN_PRODUCTS`, `TIE_PRICE = 15.99`, `localeCompareEn`, `expectedNames`, `expectedPrices`).
     - `pages/inventory.page.ts`: extensión aditiva (`sortDropdown`, `firstItemTitle`, `selectSortAndSettle`, `getItemNames`/`getItemPrices`, `openProductDetail`, `goBackToProducts`).
     - `tests/sort.spec.ts`: 8 tests E2E cubriendo RF-1 a RF-8 (TC-1..TC-8).
+- `specs/006-session-logout-saucedemo`: 100% cerrada (RF-1 a RF-10 cubiertos, 10/10 passed en Chromium).
+  - RF-1/RF-2: apertura del menú hamburguesa y criterio "menú abierto" como conjunción estricta AND (`aria-hidden="false"` + enlace Logout `toBeInViewport({ ratio: 1 })`), descartando `toBeVisible()` (falso positivo off-screen).
+  - RF-3: el logout retorna a `/` en estado asentado (URL raíz + inventario no expuesto), sin aseverar la URL inmediata de la navegación.
+  - RF-4: eliminación de la cookie `session-username` verificada sobre `browserContext.cookies()` (estado del contexto, no locator del DOM).
+  - RF-5: el guard de `/inventory.html` deniega cookie ausente, vacía (`''`) e inválida (`usuario_falso`) → redirect a `/` + banner `Epic sadface: You can only access '/inventory.html' when you are logged in.`.
+  - RF-6: atrás/adelante post-logout sobre estado asentado (secuencia acotada alternando back/forward); nunca expone contenido protegido.
+  - RF-7: el re-login tras el logout restaura una sesión válida (`session-username=standard_user`).
+  - RF-8: idempotencia de la ráfaga (doble clic) sin `pageerror` y con la cookie eliminada.
+  - RF-9: non-goal de `localStorage` — la analítica no-auth (`backtrace-guid`, `backtrace-last-active`) persiste tras el logout (se asevera persistencia, no limpieza).
+  - RF-10: guardarraíles de localización semántica (rol / `data-test`) y determinismo (0 sleeps); `.bm-menu-wrap` como único CSS §4 justificado.
+  - Capacidades incorporadas:
+    - `types/session.types.ts`: contratos/constantes (`SAUCEDEMO_ORIGIN`, `SAUCEDEMO_DOMAIN`, `SESSION_COOKIE_NAME`, `SESSION_USER`, `PROTECTED_PATH`, `ROOT_URL_PATTERN`, `ANALYTICS_STORAGE_KEYS`) y helpers puros `findSessionCookie`/`hasSessionCookie`.
+    - `types/messages.types.ts`: `SESSION_MESSAGES.guardedRoute` (aditivo, conserva `LOGIN_ERROR_MESSAGES`).
+    - `pages/inventory.page.ts`: extensión aditiva de menú/logout (`openMenuAndSettle`, `logoutAndSettle` idempotente, `expectSettledAtLoginRoot`, `expectGuardBanner`, `getSessionCookie`).
+    - `tests/logout.spec.ts`: 10 tests E2E cubriendo RF-1 a RF-10 (TC-1..TC-10).
+  - Nota de auditoría: el marcador de inventario se localiza por `[data-test="inventory-container"]` (el `id="inventory_container"` está duplicado en el DOM → violación de strict mode).
 
 ## Suite de Regresión Global
-- `npm run test:all`: 33 passed en Chromium (auth 5 + checkout 3 + inventory 7 + cart 10 + sort 8) — specs 001 a 005.
-- `npm run lint:determinism`: 0 sleeps / 0 `waitForTimeout` en todo el arnés.
+- `npm run test:all`: 43 passed en Chromium (auth 5 + checkout 3 + inventory 7 + cart 10 + sort 8 + logout 10) — specs 001 a 006.
+- `npm run lint:determinism`: 0 sleeps / 0 `waitForTimeout` en todo el arnés (script ampliado a todo el árbol + archivos no rastreados vía `git grep --untracked`).
 
 ## Capacidades de Calibración RCA
 - `FAULT-01`: `SELECTOR_DESFASADO` (100% de precisión).
