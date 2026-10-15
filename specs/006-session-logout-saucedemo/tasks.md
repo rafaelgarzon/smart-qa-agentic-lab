@@ -14,7 +14,7 @@ Granularidad: **10 tareas atómicas secuenciales** (≤10), mapeo 1:1 RF↔TC co
   Hecho cuando: `npx tsc --noEmit` compila sin `any` y `findSessionCookie([])` devuelve `undefined`.
 
 - [x] **T2. Extender `pages/inventory.page.ts` (aditivo) con menú/logout y métodos reactivos** RF-1, RF-2, RF-3, RF-6, RF-10
-  Añadir locators: `burgerButton = page.getByRole('button', { name: 'Open Menu' })`, `logoutLink = page.locator('[data-test="logout-sidebar-link"]')`, `menuPanel = page.locator('.bm-menu-wrap')` **(CSS §4 justificado)**, `inventoryContainer = page.locator('#inventory_container')` **(CSS §4 justificado)**, `errorBanner = page.locator('[data-test="error"]')`. Métodos: `openMenuAndSettle()` (clic burger → `expect(menuPanel).toHaveAttribute('aria-hidden','false')` **y** `expect(logoutLink).toBeInViewport({ ratio: 1 })`), `logoutAndSettle()` (clic `logoutLink` → `expectSettledAtLoginRoot()`), `expectSettledAtLoginRoot()` (`toHaveURL(ROOT_URL_PATTERN)` **y** `inventoryContainer` no visible), `expectGuardBanner()` (`errorBanner` con `SESSION_MESSAGES.guardedRoute`) y `getSessionCookie()` (lee `page.context().cookies()` + `findSessionCookie`). **NO** tocar `playwright.config.ts`. Conservar intactos todos los locators/métodos actuales (001–005).
+  Añadir locators: `burgerButton = page.getByRole('button', { name: 'Open Menu' })`, `logoutLink = page.locator('[data-test="logout-sidebar-link"]')`, `menuPanel = page.locator('.bm-menu-wrap')` **(único CSS §4 justificado)**, `inventoryContainer = page.locator('[data-test="inventory-container"]')` **(atributo de contrato; NO `#inventory_container`, cuyo `id` está duplicado en el DOM → strict mode)**, `errorBanner = page.locator('[data-test="error"]')`. Métodos: `openMenuAndSettle()` (clic burger → `expect(menuPanel).toHaveAttribute('aria-hidden','false')` **y** `expect(logoutLink).toBeInViewport({ ratio: 1 })`), `isMenuOpen()` (privado: lee `aria-hidden` para idempotencia), `logoutAndSettle()` (**idempotente**: si el menú ya está abierto no re-clica el burger → clic `logoutLink` → `expectSettledAtLoginRoot()`), `expectSettledAtLoginRoot()` (`toHaveURL(ROOT_URL_PATTERN)` **y** `inventoryContainer` no visible), `expectGuardBanner()` (`errorBanner` con `SESSION_MESSAGES.guardedRoute`) y `getSessionCookie()` (lee `page.context().cookies()` + `findSessionCookie`). **NO** tocar `playwright.config.ts`. Conservar intactos todos los locators/métodos actuales (001–005).
   Hecho cuando: `npm run test:all` sigue en verde para 001–005 y `npx tsc --noEmit` compila sin errores.
 
 ## Fase 2 — Pruebas E2E (mapeo incremental TC-1..TC-10)
@@ -23,32 +23,32 @@ Granularidad: **10 tareas atómicas secuenciales** (≤10), mapeo 1:1 RF↔TC co
   En `tests/logout.spec.ts` (con `beforeEach` de login por UI): TC-1 invoca `openMenuAndSettle()` y confirma el panel abierto y el `logoutLink` actionable. TC-2 valida la **discriminación** del criterio: con el menú cerrado `logoutLink.isVisible() === true` pero `toBeInViewport({ ratio: 1 })` es falso; tras `openMenuAndSettle()` el AND es verdadero. Sin sleeps.
   Hecho cuando: ambos tests pasan en Chromium y TC-2 falla si se sustituye por `toBeVisible()`.
 
-- [ ] **T4. TC-3 + TC-4 + TC-9 — RF-3, RF-4 y RF-9: retorno, cookie y non-goal de storage** RF-3, RF-4, RF-9
+- [x] **T4. TC-3 + TC-4 + TC-9 — RF-3, RF-4 y RF-9: retorno, cookie y non-goal de storage** RF-3, RF-4, RF-9
   TC-3: `logoutAndSettle()` y `expectSettledAtLoginRoot()`. TC-4: tras el logout, `getSessionCookie()` es `undefined` (lectura de `page.context().cookies()`). TC-9: tras el logout, `session-username` ausente **y** `localStorage` **conserva** `ANALYTICS_STORAGE_KEYS` (asevera persistencia, **no** limpieza).
   Hecho cuando: los tres tests pasan en Chromium; TC-4 falla si la cookie sobrevive y TC-9 falla si se borra la analítica.
 
-- [ ] **T5. TC-5 — RF-5: guard de `/inventory.html` por navegación directa (3 sub-casos)** RF-5
-  Sub-casos deterministas: cookie **ausente** (`clearCookies()`), **vacía** (`addCookies([{ name: SESSION_COOKIE_NAME, value: '', url: SAUCEDEMO_ORIGIN, path: '/' }])`) e **inválida** (`value: 'usuario_falso'`); en cada uno `page.goto(PROTECTED_PATH)`, luego `expectSettledAtLoginRoot()` **y** `expectGuardBanner()`.
+- [x] **T5. TC-5 — RF-5: guard de `/inventory.html` por navegación directa (3 sub-casos)** RF-5
+  Sub-casos deterministas: cookie **ausente** (`clearCookies()`), **vacía** (`addCookies([{ name: SESSION_COOKIE_NAME, value: '', url: SAUCEDEMO_ORIGIN }])`) e **inválida** (`value: 'usuario_falso'`); en cada uno `page.goto(PROTECTED_PATH)`, luego `expectSettledAtLoginRoot()` **y** `expectGuardBanner()`. **Nota:** se usa `url` **solo** (Playwright deriva `path`/`domain` y rechaza `url` + `path` juntos).
   Hecho cuando: los tres sub-casos redirigen a `/` con el banner visible y el test falla si el guard no valida el valor.
 
-- [ ] **T6. TC-6 — RF-6: atrás/adelante bloqueados sobre estado asentado** RF-6
-  Tras `logoutAndSettle()`, ejecutar `page.goBack()` y `page.goForward()` (una y varias veces); en cada paso aseverar el **estado asentado** (`expectSettledAtLoginRoot()` + `expectGuardBanner()`), nunca la URL inmediata. No se exige ausencia de flash.
+- [x] **T6. TC-6 — RF-6: atrás/adelante bloqueados sobre estado asentado** RF-6
+  Tras `logoutAndSettle()`, ejecutar una **secuencia acotada y determinista que alterna** `page.goBack()` y `page.goForward()` (evita agotar el historial → `about:blank`); en cada paso aseverar el **estado asentado** (`expectSettledAtLoginRoot()` + `expectGuardBanner()`), nunca la URL inmediata. No se exige ausencia de flash.
   Hecho cuando: todas las navegaciones concluyen desautenticadas y el test pasa de forma repetible (sin flakiness).
 
-- [ ] **T7. TC-7 — RF-7: re-login determinista restaura la sesión** RF-7
+- [x] **T7. TC-7 — RF-7: re-login determinista restaura la sesión** RF-7
   Tras `logoutAndSettle()`, ejecutar `loginPage.goto()` + `loginPage.loginWithValidCredentials('standard_user','secret_sauce')`; aseverar `expect(page).toHaveURL(/inventory\.html/)` **y** `expect((await getSessionCookie())?.value).toBe(SESSION_USER)`.
   Hecho cuando: el test pasa en Chromium con `standard_user`.
 
-- [ ] **T8. TC-8 — RF-8: idempotencia de la ráfaga de clic** RF-8
+- [x] **T8. TC-8 — RF-8: idempotencia de la ráfaga de clic** RF-8
   Adjuntar `page.on('pageerror', e => pageErrors.push(e))` **antes** de la acción; con el menú asentado ejecutar `logoutLink.click({ clickCount: 2 })`; aseverar estado asentado en `/` (`expectSettledAtLoginRoot()`), `getSessionCookie()` ausente y `expect(pageErrors).toHaveLength(0)`. No se cuenta el número de navegaciones.
   Hecho cuando: el test pasa en Chromium y falla si la ráfaga produce un `pageerror` o no elimina la cookie.
 
-- [ ] **T9. TC-10 — RF-10: guardarraíles de localización y determinismo** RF-10
-  Verificar estructuralmente que el POM localiza el burger por **rol** y el logout por `data-test` (sin CSS para esos dos), y que `tests/logout.spec.ts` no contiene `waitForTimeout`/`sleep`. Los CSS `.bm-menu-wrap` / `#inventory_container` solo aparecen con la justificación §4.
+- [x] **T9. TC-10 — RF-10: guardarraíles de localización y determinismo** RF-10
+  Verificar estructuralmente que el POM localiza el burger por **rol**, el logout por `data-test` y el marcador de inventario por `[data-test="inventory-container"]` (sin CSS para esos tres), y que `tests/logout.spec.ts` no contiene `waitForTimeout`/`sleep`. El único CSS estructural (`.bm-menu-wrap`) solo aparece con la justificación §4.
   Hecho cuando: el test estructural pasa y `npm run lint:determinism` reporta 0 sleeps.
 
 ## Fase 3 — Quality Gate transversal
 
-- [ ] **T10. Quality Gate: tipos, determinismo (todo el árbol) y regresión global** RF-1..RF-10
+- [x] **T10. Quality Gate: tipos, determinismo (todo el árbol) y regresión global** RF-1..RF-10
   Ampliar el script `lint:determinism` de `package.json` para cubrir **todo el árbol del arnés** (`pages/`, `tests/`, `fixtures/`, `types/`, `reporters/`, helpers) **incluyendo archivos no rastreados** (p. ej. `git grep --untracked`). Ejecutar `npx tsc --noEmit` (sin errores), `npm run lint:determinism` (0 sleeps) y `npm run test:all` (Chromium, suites 001–006 en verde, incluyendo `tests/logout.spec.ts` con 10 TC). Confirmar la matriz de trazabilidad RF → TC y la ausencia de solapamiento con 001–005.
   Hecho cuando: `tsc --noEmit` limpio, `lint:determinism` limpio (todo el árbol) y `test:all` en verde con la matriz RF→TC confirmada.
