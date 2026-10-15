@@ -1,6 +1,8 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator, expect, type Cookie } from '@playwright/test';
 import { InventoryProduct, PRICE_PATTERN, SORT_OPTIONS, SortKey } from '../types/inventory.types';
 import { SortOption, expectedNames } from '../types/sort.types';
+import { ROOT_URL_PATTERN, findSessionCookie } from '../types/session.types';
+import { SESSION_MESSAGES } from '../types/messages.types';
 
 export class InventoryPage {
   readonly page: Page;
@@ -17,6 +19,12 @@ export class InventoryPage {
   readonly shoppingCartBadge: Locator;
   readonly shoppingCartLink: Locator;
   readonly backToProductsButton: Locator;
+  // Header / menú lateral (spec 006)
+  readonly burgerButton: Locator;
+  readonly menuPanel: Locator;
+  readonly logoutLink: Locator;
+  readonly inventoryContainer: Locator;
+  readonly errorBanner: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -34,6 +42,16 @@ export class InventoryPage {
     this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
     this.shoppingCartLink = page.locator('[data-test="shopping-cart-link"]');
     this.backToProductsButton = page.locator('[data-test="back-to-products"]');
+    // Header / menú lateral (spec 006). `.bm-menu-wrap` y el marcador de inventario son de
+    // último recurso justificados en spec.md §Selectores (nodo de `react-burger-menu` sin
+    // `data-test`/rol, respectivamente). El marcador de inventario usa `[data-test]` porque el
+    // `id="inventory_container"` está DUPLICADO en el DOM de SauceDemo (el `role="main"` y el grid),
+    // lo que provoca violación de strict mode; `[data-test="inventory-container"]` es único (§4).
+    this.burgerButton = page.getByRole('button', { name: 'Open Menu' });
+    this.menuPanel = page.locator('.bm-menu-wrap');
+    this.logoutLink = page.locator('[data-test="logout-sidebar-link"]');
+    this.inventoryContainer = page.locator('[data-test="inventory-container"]');
+    this.errorBanner = page.locator('[data-test="error"]');
   }
 
   // Retrocompatibilidad con suites existentes
@@ -153,5 +171,63 @@ export class InventoryPage {
     await this.backToProductsButton.click();
     await expect(this.page).toHaveURL(/inventory\.html/);
     await this.waitForInventoryLoaded();
+  }
+
+  // --- Ciclo de sesión / menú lateral (spec 006) ---
+
+  /**
+   * Abre el menú lateral y espera su asentamiento reactivo (RF-1/RF-2).
+   * Criterio "menú abierto" = conjunción estricta AND: (a) el panel tiene `aria-hidden="false"`
+   * y (b) el enlace Logout está plenamente dentro del viewport (`toBeInViewport({ ratio: 1 })`).
+   * No se usa `toBeVisible()` del enlace: con el menú cerrado es `isVisible() === true` estando
+   * off-screen (falso positivo caracterizado en spec.md). 0 sleeps.
+   */
+  async openMenuAndSettle(): Promise<void> {
+    await this.burgerButton.click();
+    await expect(this.menuPanel).toHaveAttribute('aria-hidden', 'false');
+    await expect(this.logoutLink).toBeInViewport({ ratio: 1 });
+  }
+
+  /** Indica si el panel lateral está en estado abierto (`aria-hidden="false"`). Lectura puntual, 0 sleeps. */
+  private async isMenuOpen(): Promise<boolean> {
+    return (await this.menuPanel.getAttribute('aria-hidden')) === 'false';
+  }
+
+  /**
+   * Ejecuta el logout asegurando el menú abierto y espera el asentamiento en la vista de login (RF-3).
+   * Idempotente respecto al estado del menú: si ya está abierto (p. ej. tras `openMenuAndSettle()`),
+   * no reitera el clic en el burger (que estaría interceptado por el panel). 0 sleeps.
+   */
+  async logoutAndSettle(): Promise<void> {
+    if (!(await this.isMenuOpen())) {
+      await this.openMenuAndSettle();
+    }
+    await this.logoutLink.click();
+    await this.expectSettledAtLoginRoot();
+  }
+
+  /**
+   * Verifica el estado asentado post-logout (no circular): URL raíz Y el contenedor de
+   * inventario no visible. Nunca se asevera sobre la URL inmediata de una navegación (RF-3/RF-6).
+   */
+  async expectSettledAtLoginRoot(): Promise<void> {
+    await expect(this.page).toHaveURL(ROOT_URL_PATTERN);
+    await expect(this.inventoryContainer).not.toBeVisible();
+  }
+
+  /**
+   * Verifica el banner del guard de la ruta protegida (RF-5/RF-6): visible y con el texto exacto.
+   */
+  async expectGuardBanner(): Promise<void> {
+    await expect(this.errorBanner).toBeVisible();
+    await expect(this.errorBanner).toHaveText(SESSION_MESSAGES.guardedRoute);
+  }
+
+  /**
+   * Devuelve la cookie de sesión `session-username` desde el contexto del navegador,
+   * o `undefined` si está ausente. La sesión es estado del contexto, no un locator del DOM (RF-4).
+   */
+  async getSessionCookie(): Promise<Cookie | undefined> {
+    return findSessionCookie(await this.page.context().cookies());
   }
 }
