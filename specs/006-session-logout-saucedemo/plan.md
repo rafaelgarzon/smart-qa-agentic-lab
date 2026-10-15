@@ -57,7 +57,7 @@ export function hasSessionCookie(cookies: Cookie[]): boolean;             // fin
 | Burger de apertura | `page.getByRole('button', { name: 'Open Menu' })` (`#react-burger-menu-btn`) | Rol semántico (preferente) |
 | Enlace Logout | `page.locator('[data-test="logout-sidebar-link"]')` | Atributo de contrato |
 | Panel lateral | `page.locator('.bm-menu-wrap')` | CSS (último recurso **justificado**: nodo de `react-burger-menu`, sin `data-test`/rol; se lee `aria-hidden`) |
-| Marcador de inventario | `page.locator('#inventory_container')` | `id` CSS (último recurso **justificado**: raíz del layout privado, sin `data-test`) |
+| Marcador de inventario | `page.locator('[data-test="inventory-container"]')` | Atributo de contrato (preferente; **no** `#inventory_container`, cuyo `id` está duplicado en el DOM → strict mode) |
 | Banner del guard | `page.locator('[data-test="error"]')` | Atributo de contrato (consistente con `pages/login.page.ts`) |
 
 > **Nota de localización (desviación justificada respecto al enunciado informal):** el criterio de "menú abierto" usa `toBeInViewport({ ratio: 1 })`, **no** `toBeVisible()`, porque el enlace con el menú cerrado es `isVisible() === true` estando off-screen (`x = -276`) — falso positivo caracterizado en `spec.md`. Prevalece la spec (Constitución §1).
@@ -68,7 +68,7 @@ export function hasSessionCookie(cookies: Cookie[]): boolean;             // fin
 2. **Criterio de "menú abierto" como conjunción AND (RF-1/RF-2).** `openMenuAndSettle()` espera `menuPanel` con `aria-hidden="false"` **y** `logoutLink` con `toBeInViewport({ ratio: 1 })`. **Descartados** `toBeVisible()` (falso positivo off-screen) y cualquier `waitForTimeout` (§3).
 3. **Asentamiento de navegación vía aserciones web-first (RF-3/RF-6).** `logoutAndSettle()`/`expectSettledAtLoginRoot()` combinan `expect(page).toHaveURL(ROOT_URL_PATTERN)` **y** `expect(inventoryContainer).not.toBeVisible()`. **Descartado** aseverar sobre la URL inmediata de la navegación (carrera caracterizada: `/inventory.html` transitoria en `goBack`).
 4. **Verificación de cookie sobre el contexto.** La presencia/ausencia de `session-username` se lee de `page.context().cookies()` vía `getSessionCookie()`/`findSessionCookie`. **Descartado** inferir la sesión del DOM (`document.cookie` no ve cookies no-`httpOnly` de forma fiable; la credencial no es `httpOnly` pero el estado autoritativo es el contexto). (§4 en spec.)
-5. **Inyección de cookie para RF-5.** Los casos directo/sin-valor se fuerzan con `page.context().addCookies([{ name, value, url: SAUCEDEMO_ORIGIN, path: '/' }])` (valores `''` y `usuario_falso`) y cookie ausente con `clearCookies()`. **Descartado** manipular `document.cookie` por script (evita el `addCookies` tipado y el mismoSiteController).
+5. **Inyección de cookie para RF-5.** Los casos directo/sin-valor se fuerzan con `page.context().addCookies([{ name, value, url: SAUCEDEMO_ORIGIN }])` (valores `''` y `usuario_falso`; `url` **solo**, Playwright deriva `path`/`domain`) y cookie ausente con `clearCookies()`. **Descartado** manipular `document.cookie` por script (evita el `addCookies` tipado y el mismoSiteController).
 6. **Idempotencia por ráfaga (RF-8).** Se ejecuta `logoutLink.click({ clickCount: 2 })` dentro del menú asentado, con un colector `page.on('pageerror', …)` adjunto **antes** de la acción; se asevera estado asentado en `/` **y** `pageErrors.length === 0`. **Descartado** contar navegaciones (`page.on('framenavigated')`): no es un oráculo estable ni exigido por la spec.
 7. **RF-9 como non-goal acotado.** El test **asevera persistencia** de `ANALYTICS_STORAGE_KEYS` en `localStorage` (comportamiento esperado), pero **no** exige ni comprueba limpieza. **Descartado** aseverar la ausencia de esas claves (iría contra RF-9).
 8. **Guardarraíl de determinismo ampliado (H23/N3).** `lint:determinism` se amplía a todo el árbol del arnés con `git grep --untracked` (§11). **Descartado** dejar el script limitado a `pages/` y `tests/`.
@@ -85,11 +85,11 @@ Todos los casos viven en `tests/logout.spec.ts`, con `beforeEach` de login por U
 | TC-3 | RF-3 | `logoutAndSettle()`: clic en `logoutLink`; `expect(page).toHaveURL(ROOT_URL_PATTERN)` sobre estado asentado. |
 | TC-4 | RF-4 | Tras el logout, `getSessionCookie()` es `undefined` (lectura de `page.context().cookies()`, no del DOM). |
 | TC-5 | RF-5 | Navegación directa a `/inventory.html` sin sesión válida en 3 sub-casos: cookie **ausente** (`clearCookies`), **vacía** (`''`) e **inválida** (`usuario_falso`); en los tres: redirect a `/` + banner `SESSION_MESSAGES.guardedRoute` visible. |
-| TC-6 | RF-6 | Tras logout, `page.goBack()` y `page.goForward()` (una y varias veces): estado asentado en `/`, `inventoryContainer` no visible, banner del guard visible. Aserción sobre estado asentado, nunca sobre URL inmediata. |
+| TC-6 | RF-6 | Tras logout, una **secuencia acotada y determinista** que alterna `page.goBack()`/`page.goForward()` (evita agotar el historial → `about:blank`): estado asentado en `/`, `inventoryContainer` no visible, banner del guard visible. Aserción sobre estado asentado, nunca sobre URL inmediata. (Refinamiento por determinismo §3; ver Ajuste de auditoría 2026-10-15.) |
 | TC-7 | RF-7 | Tras logout, `loginPage.goto()` + `loginWithValidCredentials()`: `expect(page).toHaveURL(/inventory\.html/)` **y** `findSessionCookie(...)` con `value === SESSION_USER`. |
 | TC-8 | RF-8 | Colector `page.on('pageerror')` + `logoutLink.click({ clickCount: 2 })`: estado asentado en `/`, cookie eliminada, `pageErrors.length === 0`. |
 | TC-9 | RF-9 | Tras logout, `session-username` ausente **y** `localStorage` **conserva** `ANALYTICS_STORAGE_KEYS` (asevera persistencia, no limpieza). |
-| TC-10 | RF-10 | Guardarraíl estructural: el POM localiza el burger por rol y el logout por `data-test` (sin CSS para esos dos); ausencia de `waitForTimeout`/`sleep` en el spec; `npm run lint:determinism` = 0 sleeps sobre todo el árbol. |
+| TC-10 | RF-10 | Guardarraíl estructural: el POM localiza el burger por rol, el logout y el marcador de inventario por `data-test` (sin CSS para esos tres; sin `#inventory_container`); único CSS `.bm-menu-wrap` con justificación §4; ausencia de `waitForTimeout`/`sleep` en el spec; `npm run lint:determinism` = 0 sleeps sobre todo el árbol. |
 
 **Comandos:** `npx playwright test tests/logout.spec.ts --project=chromium`, `npm run lint:determinism`, `npm run test:all`, `npx tsc --noEmit`.
 
@@ -127,20 +127,20 @@ Todos los casos viven en `tests/logout.spec.ts`, con `beforeEach` de login por U
 |---|---|---|
 | `click({ clickCount: 2 })` con navegación | Detach/acción interrumpida por el redirect | Ejecutar dentro del menú asentado; aseverar estado asentado final + `pageerror = 0`; si el AUT lo impide, usar `dblclick()` (misma semántica). |
 | `goBack()` transitorio | URL inmediata `/inventory.html` antes de asentar | Aserción **solo** sobre estado asentado (`toHaveURL(ROOT) ∥ not.toBeVisible`). |
-| `addCookies` dominio/url | Cookie no aplicada → falso verde | Usar `url: SAUCEDEMO_ORIGIN` + `path: '/'`; verificar el efecto por el redirect + banner. |
-| Localizador `.bm-menu-wrap` / `#inventory_container` (§4) | Cambios de layout del AUT | Último recurso justificado; si el AUT cambia, el test falla explícitamente. |
+| `addCookies` dominio/url | Cookie no aplicada → falso verde | Usar `url: SAUCEDEMO_ORIGIN` **solo** (Playwright deriva `path`/`domain` y rechaza `url`+`path` juntos); verificar el efecto por el redirect + banner. |
+| Localizador `.bm-menu-wrap` (§4, único CSS) | Cambios de layout del AUT | Último recurso justificado; si el AUT cambia, el test falla explícitamente. |
 | Cambios a `inventory.page.ts` | Romper 001–005 | Cambios estrictamente aditivos; no tocar firmas existentes. |
 | `lint:determinism` limitado | Falso "0 sleeps" | Ampliar a todo el árbol + no rastreados (`--untracked`). |
 
 ## 11. Checklist de Validación
 
-- [ ] `types/session.types.ts` con contratos/constantes y helpers puros (sin `any`).
-- [ ] `types/messages.types.ts` ampliado con `SESSION_MESSAGES.guardedRoute` (aditivo).
-- [ ] `inventory.page.ts` extendido (aditivo) con locators de menú y `openMenuAndSettle()` / `logoutAndSettle()` / `getSessionCookie()`.
-- [ ] `playwright.config.ts` intacto.
-- [ ] `tests/logout.spec.ts` cubriendo RF-1 a RF-10 (TC-1 a TC-10).
-- [ ] Matriz RF → TC 1:1 verificada, sin re-testear 001–005.
-- [ ] `lint:determinism` ampliado (todo el árbol + no rastreados) en verde; `npx tsc --noEmit` sin errores; `npm run test:all` en verde (001–006).
+- [x] `types/session.types.ts` con contratos/constantes y helpers puros (sin `any`).
+- [x] `types/messages.types.ts` ampliado con `SESSION_MESSAGES.guardedRoute` (aditivo).
+- [x] `inventory.page.ts` extendido (aditivo) con locators de menú y `openMenuAndSettle()` / `logoutAndSettle()` / `getSessionCookie()`.
+- [x] `playwright.config.ts` intacto.
+- [x] `tests/logout.spec.ts` cubriendo RF-1 a RF-10 (TC-1 a TC-10).
+- [x] Matriz RF → TC 1:1 verificada, sin re-testear 001–005.
+- [x] `lint:determinism` ampliado (todo el árbol + no rastreados) en verde; `npx tsc --noEmit` sin errores; `npm run test:all` en verde (001–006).
 
 ## 12. Referencias
 
