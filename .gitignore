@@ -10,3 +10,8 @@ node_modules/
 test-results/
 playwright-report/
 blob-report/
+
+# Secretos locales
+.env
+.env.*
+!.env.example
