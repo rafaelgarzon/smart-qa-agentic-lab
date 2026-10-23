@@ -8,7 +8,8 @@ export default defineConfig<ProjectOptions>({
   testIgnore: [],
   outputDir: './test-results',
   reporter: [
-    ['html', { outputFolder: 'playwright-report-faults' }],
+    ['list'],
+    ['html', { outputFolder: 'playwright-report-faults', open: 'never' }],
     ['./reporters/agent-context.ts'],
   ],
   projects: [
