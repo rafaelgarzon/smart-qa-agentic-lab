@@ -6,8 +6,15 @@ import { CheckoutStepOnePage } from '../pages/checkout-step-one.page';
 import { CheckoutStepTwoPage } from '../pages/checkout-step-two.page';
 import { CheckoutCompletePage } from '../pages/checkout-complete.page';
 
+export type ResponsePatch = {
+  url: string;
+  find: string;
+  replace: string;
+};
+
 export type ProjectOptions = {
   abortedRoutes: string[];
+  responsePatches: ResponsePatch[];
 };
 
 type ProjectFixtures = {
@@ -21,9 +28,20 @@ type ProjectFixtures = {
 
 export const test = base.extend<ProjectOptions & ProjectFixtures>({
   abortedRoutes: [[], { option: true }],
-  page: async ({ page, abortedRoutes }, use) => {
+  responsePatches: [[], { option: true }],
+  page: async ({ page, abortedRoutes, responsePatches }, use) => {
     for (const pattern of abortedRoutes) {
       await page.route(pattern, (route) => route.abort('connectionfailed'));
+    }
+    for (const { url, find, replace } of responsePatches) {
+      await page.route(url, async (route) => {
+        const response = await route.fetch();
+        const body = await response.text();
+        if (!body.includes(find)) {
+          throw new Error(`responsePatches: "${find}" no aparece en ${route.request().url()}`);
+        }
+        await route.fulfill({ response, body: body.split(find).join(replace) });
+      });
     }
     await use(page);
   },

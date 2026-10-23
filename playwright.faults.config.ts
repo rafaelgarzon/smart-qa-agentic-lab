@@ -14,8 +14,22 @@ export default defineConfig<ProjectOptions>({
   projects: [
     {
       name: 'chromium',
-      testIgnore: /fault-03\.spec\.ts/,
+      testIgnore: /fault-0[23]\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'chromium-02',
+      testMatch: /fault-02\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        responsePatches: [
+          {
+            url: '**/assets/index-*.js',
+            find: 'Sorry, this user has been locked out.',
+            replace: 'Sorry, this account is temporarily unavailable.',
+          },
+        ],
+      },
     },
     {
       name: 'chromium-03',
