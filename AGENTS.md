@@ -29,7 +29,7 @@ types/            Contratos, constantes y oráculos puros (*.types.ts)
 fixtures/         test-fixtures.ts (fixtures de Playwright que inyectan los POM)
 utils/            urls.ts
 tests/            Suites productivas: auth, checkout, inventory, cart, sort, logout (*.spec.ts)
-tests/faults/     Fallos sembrados INMUTABLES: fault-01 (selector), fault-02 (producto), fault-03 (red)
+tests/faults/     Fallos sembrados FAULT-01 a FAULT-03 (dataset de calibración; la clave vive en docs/rca/)
 reporters/        agent-context.ts → emite test-results/last-failure.json sanitizado
 docs/             constitution.md · adr/ · rca/fault-injection-key.md · backlog-plan-trabajo.md
 .opencode/agents/     planner · implementer · reviewer
@@ -65,6 +65,7 @@ playwright.faults.config.ts   Config exclusivo para los fallos sembrados
 4. Aprobación humana antes de aplicar cualquier cambio (HitL): primero se presenta el plan o el diff.
 5. No instalar ni actualizar paquetes sin aprobación explícita.
 6. No escribir claves, tokens ni secretos en archivos versionados: usar `.env` (está ignorado) y referencias `${VAR}`.
+7. El agente de triage no lee `docs/rca/` (clave de calibración).
 
 ## Memoria
 - Al iniciar cada tarea, leer `MEMORY.md`.
@@ -75,7 +76,7 @@ playwright.faults.config.ts   Config exclusivo para los fallos sembrados
 ## Herramientas
 ### OpenCode
 - Ciclo SDD: `/sdd-spec <NNN-nombre> <idea>` → `/sdd-clarify` → `/sdd-plan` → `/sdd-tasks` → `/sdd-implement <NNN-nombre> <Tn>` (una tarea, tests primero) → `/sdd-validate` → `/sdd-status`.
-- `/triage`: RCA sobre `test-results/last-failure.json`. Clasifica el fallo en `SELECTOR_DESFASADO`, `BUG_PRODUCTO` o `DATOS_O_ENTORNO`.
+- `/triage`: RCA sobre `test-results/last-failure.json`. Clasifica el fallo en `SELECTOR_DESFASADO`, `BUG_PRODUCTO`, `DATOS_O_ENTORNO`, `FLAKY` o `INDETERMINADO` (evidencia no concluyente).
 - `/repair`: propone un diff quirúrgico solo para `SELECTOR_DESFASADO`.
 - Agentes: `planner` (planifica, no escribe código), `implementer` (implementa tareas) y `reviewer` (audita determinismo, POM y trazabilidad).
 

@@ -1,15 +1,12 @@
 # MEMORY - Smart QA Agentic Lab
 
 ## Estado actual
-- Fecha: 2026-10-22 · Rama: `main` (spec 006 integrada; ramas `feature/*` y `fault-injection*` ya históricas).
+- Fecha: 2026-10-23 · Rama: `main` (spec 006 integrada; ramas `feature/*` y `fault-injection*` ya históricas).
 - Specs cerradas al 100% (detalle en `specs/`):
   - 001 login: 5 tests · 002 checkout: 3 · 003 inventory: 7
   - 004 cart: 10 · 005 sort: 8 · 006 session-logout: 10
 - `npm run test:all`: 43 passed en Chromium. `npm run lint:determinism`: 0 `waitForTimeout`.
-- Calibración RCA (`tests/faults/`, `docs/rca/fault-injection-key.md`):
-  - FAULT-01 `SELECTOR_DESFASADO` (100% de precisión).
-  - FAULT-02 `BUG_PRODUCTO` (100% de precisión).
-  - FAULT-03 `DATOS_O_ENTORNO` (interrupción de red sembrada).
+- FAULT-01 a FAULT-03 sembrados; resultados y clave en `docs/rca/fault-injection-key.md`.
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
 ## Decisiones clave
@@ -34,3 +31,4 @@
 ## Pendientes y observaciones
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
+- Renombrar `tests/faults/` con nombres neutros (`fault-NN.spec.ts`): los nombres actuales delatan la categoría.
