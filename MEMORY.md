@@ -31,4 +31,4 @@
 ## Pendientes y observaciones
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
-- Renombrar `tests/faults/` con nombres neutros (`fault-NN.spec.ts`): los nombres actuales delatan la categoría.
+- Volver a medir la precisión de /triage sobre FAULT-01 a 03 tras neutralizar nombres y títulos.
