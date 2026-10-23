@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "triage": "opencode run /triage",
+    "triage": "opencode run --command triage",
     "lint:determinism": "git grep -n --untracked -e 'waitForTimeout' -- pages/ tests/ fixtures/ types/ reporters/ utils/ && exit 1 || echo 'Determinismo garantizado: 0 sleeps'",
     "test": "playwright test tests/auth.spec.ts --project=chromium",
     "test:faults": "playwright test --config=playwright.faults.config.ts",
