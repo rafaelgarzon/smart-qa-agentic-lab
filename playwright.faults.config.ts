@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 import baseConfig from './playwright.config';
+import type { ProjectOptions } from './fixtures/test-fixtures';
 
-export default defineConfig({
+export default defineConfig<ProjectOptions>({
   ...baseConfig,
   testDir: './tests/faults',
   testIgnore: [],
@@ -13,7 +14,13 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      testIgnore: /fault-03\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'chromium-03',
+      testMatch: /fault-03\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'], abortedRoutes: ['https://www.saucedemo.com/'] },
     },
   ],
 });

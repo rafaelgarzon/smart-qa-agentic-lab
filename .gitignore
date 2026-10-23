@@ -9,7 +9,9 @@ node_modules/
 
 test-results/
 playwright-report/
+playwright-report-faults/
 blob-report/
+.playwright-mcp/
 
 # Secretos locales
 .env

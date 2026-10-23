@@ -65,7 +65,7 @@ playwright.faults.config.ts   Config exclusivo para los fallos sembrados
 4. Aprobación humana antes de aplicar cualquier cambio (HitL): primero se presenta el plan o el diff.
 5. No instalar ni actualizar paquetes sin aprobación explícita.
 6. No escribir claves, tokens ni secretos en archivos versionados: usar `.env` (está ignorado) y referencias `${VAR}`.
-7. El agente de triage no lee `docs/rca/` (clave de calibración).
+7. El agente de triage no lee `docs/rca/` ni `playwright.faults.config.ts`.
 
 ## Memoria
 - Al iniciar cada tarea, leer `MEMORY.md`.

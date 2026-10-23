@@ -18,6 +18,7 @@
 - Se asevera el estado asentado tras navegar (URL raíz + inventario oculto), no la URL inmediata.
 - `tests/faults/` queda fuera de `test:all` y tiene su propio config (`playwright.faults.config.ts`).
 - AGENTS.md y MEMORY.md son la memoria compartida entre OpenCode y Claude Code.
+- Las intercepciones de red de los fallos sembrados se configuran por proyecto en `playwright.faults.config.ts` (opción `abortedRoutes` del fixture, `[]` por defecto), nunca dentro del test.
 
 ## Errores a evitar
 - `toBeVisible()` sobre el menú hamburguesa da falso positivo (el menú está fuera de pantalla pero cuenta como visible).
@@ -27,8 +28,10 @@
 - Usar CSS cuando existe rol o `data-test` (`.bm-menu-wrap` es la única excepción justificada).
 - Editar fallos sembrados o "arreglar" un test tocando su `expect`.
 - Guardar contexto importante solo en la auto-memoria de Claude Code (OpenCode no la ve).
+- Interceptar `**/inventory.html`: el login navega en el cliente y no pide ese documento a la red, así que la ruta nunca se activa.
 
 ## Pendientes y observaciones
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
 - Volver a medir la precisión de /triage sobre FAULT-01 a 03 tras neutralizar nombres y títulos.
+- FAULT-04 futuro: cortar el bundle JS y enriquecer el reporter con errores de consola y peticiones fallidas en last-failure.json.

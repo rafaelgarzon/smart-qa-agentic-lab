@@ -9,5 +9,5 @@ Los resultados de esta tabla se obtuvieron antes de neutralizar nombres y títul
 
 ## FAULT-03: Falla de Red e Infraestructura al Autenticar
 - **Archivo:** tests/faults/fault-03.spec.ts
-- **Causa Raíz Real:** Intercepción y aborto de transporte con connectionfailed simulando caída de backend (DATOS_O_ENTORNO).
-- **Comportamiento Verificado de /triage:** Clasificado como DATOS_O_ENTORNO con confianza ALTA. Veta cambios a selectores o aserciones web.
+- **Causa Raíz Real:** Aborto del documento raíz (`https://www.saucedemo.com/`) con `connectionfailed`, inyectado desde el proyecto `chromium-03` de `playwright.faults.config.ts` mediante la opción `abortedRoutes` del fixture (DATOS_O_ENTORNO). Evidencia esperada: `page.goto: net::ERR_CONNECTION_FAILED at https://www.saucedemo.com/`.
+- **Comportamiento Verificado de /triage:** ~~Clasificado como DATOS_O_ENTORNO con confianza ALTA.~~ **No válido:** con la versión anterior (`page.route('**/inventory.html')` dentro del test) el test nunca falló, porque la navegación a `/inventory.html` ocurre en el cliente y no genera ninguna petición de red. Pendiente de medir con la nueva inyección.
