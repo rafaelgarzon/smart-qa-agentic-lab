@@ -46,7 +46,7 @@ playwright.faults.config.ts   Config exclusivo para los fallos sembrados
 - `npm run test:all`: todas las suites productivas en Chromium (excluye `tests/faults/`).
 - `npm run test:faults`: ejecuta los fallos sembrados con `playwright.faults.config.ts`.
 - `npm run lint:determinism`: falla si encuentra `waitForTimeout` en pages, tests, fixtures, types, reporters o utils.
-- `npm run triage`: `opencode run /triage` sobre el último fallo.
+- `npm run triage`: `opencode run --command triage` sobre el último fallo (`opencode run /triage` ejecuta el agente build sin el comando).
 - Una sola suite: `npx playwright test tests/<suite>.spec.ts --project=chromium`.
 
 ## Convenciones
@@ -76,7 +76,7 @@ playwright.faults.config.ts   Config exclusivo para los fallos sembrados
 ## Herramientas
 ### OpenCode
 - Ciclo SDD: `/sdd-spec <NNN-nombre> <idea>` → `/sdd-clarify` → `/sdd-plan` → `/sdd-tasks` → `/sdd-implement <NNN-nombre> <Tn>` (una tarea, tests primero) → `/sdd-validate` → `/sdd-status`.
-- `/triage`: RCA sobre `test-results/last-failure.json`. Clasifica el fallo en `SELECTOR_DESFASADO`, `BUG_PRODUCTO`, `DATOS_O_ENTORNO`, `FLAKY` o `INDETERMINADO` (evidencia no concluyente).
+- `/triage`: RCA sobre `test-results/last-failure.json`. Clasifica el fallo en `SELECTOR_DESFASADO`, `BUG_PRODUCTO`, `DATOS_O_ENTORNO`, `DEFECTO_TEST`, `FLAKY` o `INDETERMINADO` (evidencia no concluyente).
 - `/repair`: propone un diff quirúrgico solo para `SELECTOR_DESFASADO`.
 - Agentes: `planner` (planifica, no escribe código), `implementer` (implementa tareas) y `reviewer` (audita determinismo, POM y trazabilidad).
 

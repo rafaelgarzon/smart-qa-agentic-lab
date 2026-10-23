@@ -7,6 +7,7 @@
   - 004 cart: 10 · 005 sort: 8 · 006 session-logout: 10
 - `npm run test:all`: 43 passed en Chromium. `npm run lint:determinism`: 0 `waitForTimeout`.
 - FAULT-01 a FAULT-03 sembrados; resultados y clave en `docs/rca/fault-injection-key.md`.
+- Iteración 1 de /triage (reglas de decisión): 2/2 fallos válidos con la categoría correcta (línea base 1/2), medida dentro de la muestra.
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
 ## Decisiones clave
@@ -31,7 +32,8 @@
 - Interceptar `**/inventory.html`: el login navega en el cliente y no pide ese documento a la red, así que la ruta nunca se activa.
 
 ## Pendientes y observaciones
+- Sembrar fallos nuevos (fuera de la muestra) sin ajustar /triage a ellos.
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
-- Volver a medir la precisión de /triage sobre FAULT-01 a 03 tras neutralizar nombres y títulos.
+- Volver a medir FAULT-02 cuando se rehaga.
 - FAULT-04 futuro: cortar el bundle JS y enriquecer el reporter con errores de consola y peticiones fallidas en last-failure.json.
