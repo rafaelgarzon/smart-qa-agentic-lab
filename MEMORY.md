@@ -7,6 +7,7 @@
   - 004 cart: 10 · 005 sort: 8 · 006 session-logout: 10
 - `npm run test:all`: 43 passed en Chromium. `npm run lint:determinism`: 0 `waitForTimeout`.
 - FAULT-01 a FAULT-03 sembrados; resultados y clave en `docs/rca/fault-injection-key.md`.
+- FAULT-04 a FAULT-09 sembrados para medición ciega; clave en docs/rca/blind-key.md
 - Calibración de /triage: 3/3 fallos sembrados con la categoría correcta (1 corrida cada uno, dentro del diseño; detalle en docs/rca/).
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
