@@ -51,12 +51,12 @@
 ## Resultados de /triage
 | Fallo | Corrida 1 | Corrida 2 | Corrida 3 | Acierto |
 |---|---|---|---|---|
-| FAULT-04 | | | | |
-| FAULT-05 | | | | |
-| FAULT-06 | | | | |
-| FAULT-07 | | | | |
-| FAULT-08 | | | | |
-| FAULT-09 | | | | |
+| FAULT-04 | `DEFECTO_TEST` ❌ | | | |
+| FAULT-05 | `DATOS_O_ENTORNO` ❌ | | | |
+| FAULT-06 | `DEFECTO_TEST` ✅ | | | |
+| FAULT-07 | `DATOS_O_ENTORNO` ✅ | | | |
+| FAULT-08 | `SELECTOR_DESFASADO` ❌ | | | |
+| FAULT-09 | `SELECTOR_DESFASADO` ❌ | | | |
 
 ## Notas de operación
 - Ejecutar cada proyecto **sin** `--reporter` (por ejemplo `npx playwright test --config=playwright.faults.config.ts --project=chromium-05`). El flag reemplaza la lista de reporters del config, incluido `agent-context`, y entonces no se genera `test-results/last-failure.json`.
