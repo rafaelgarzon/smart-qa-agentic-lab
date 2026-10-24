@@ -1,4 +1,6 @@
-# Corrida 1 · /triage ciego (Qwen3.6 35B A3B en LM Studio, 2026-10-24)
+# /triage ciego · 3 corridas (Qwen3.6 35B A3B en LM Studio, 2026-10-24)
+
+## Corrida 1
 
 | Fallo | Categoría | Confianza | Tiempo (s) |
 | :--- | :--- | :--- | :--- |
@@ -11,7 +13,7 @@
 
 Total 566 s, promedio 94 s. triage.md con reglas de decisión (commit 552c657) y la spec 001 fija en el contexto.
 
-## Comparación con la clave y la línea base manual
+### Comparación con la clave y la línea base manual
 
 | Fallo | Clave | Manual | Agente | ¿Acierta manual? | ¿Acierta agente? |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -25,7 +27,7 @@ Total 566 s, promedio 94 s. triage.md con reglas de decisión (commit 552c657) y
 - **Precisión:** manual **4/6** (67 %) · agente **2/6** (33 %).
 - **Tiempo medio por fallo:** manual 97 s · agente 94 s.
 
-## Evidencia de cada error (inferencia)
+### Evidencia de cada error (inferencia)
 
 > Inferencia a partir de la salida de cada fallo; ni la línea base manual ni la corrida del agente registran el razonamiento.
 
@@ -49,7 +51,7 @@ Total 566 s, promedio 94 s. triage.md con reglas de decisión (commit 552c657) y
 - Lo que engaña: era el señuelo previsto. `element(s) not found` y `waiting for locator('[data-test="shopping-cart-badge"]')` tienen la forma clásica de un localizador obsoleto.
 - Lo que lo descartaba: el mismo localizador resolvió con `"1"` dos líneas antes en la misma vista. Además, la RF-4 de la spec 004 dice que con el carrito vacío el badge no se renderiza, así que el test pide algo que la spec prohíbe. Ambos lo marcaron con confianza alta, así que fue el señuelo más eficaz.
 
-## Patrones
+### Patrones
 
 > La evidencia de cada error es una **inferencia** hecha a partir de la salida de cada fallo. Ni la línea base manual ni la corrida del agente registran el razonamiento, solo la categoría.
 
@@ -58,4 +60,30 @@ Total 566 s, promedio 94 s. triage.md con reglas de decisión (commit 552c657) y
 - **Puede pesar que la spec 001 esté fija en el contexto**, porque los fallos de este lote vienen de otras specs. Pero no lo explica todo: el agente acertó FAULT-06 sin tener la spec 006.
 - **Tiempo:** el agente fue apenas más rápido (94 s de media contra 97 s), así que la diferencia está en la precisión, no en el tiempo.
 
-Es una sola corrida del agente. El procedimiento del proyecto pide 3 por fallo antes de sacar conclusiones.
+Estos patrones salen de la corrida 1; las corridas 2 y 3 los matizan (sección siguiente).
+
+## Corridas 2 y 3
+
+| Fallo | Corrida 2 | Conf. | Tiempo (s) | Corrida 3 | Conf. | Tiempo (s) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| FAULT-04 | `DEFECTO_TEST` ❌ | ALTA | 107 | `BUG_PRODUCTO` ✅ | ALTA | 136 |
+| FAULT-05 | `SELECTOR_DESFASADO` ✅ | ALTA | 74 | `INDETERMINADO` ❌ | MEDIA | 55 |
+| FAULT-06 | `DEFECTO_TEST` ✅ | ALTA | 71 | `DEFECTO_TEST` ✅ | ALTA | 92 |
+| FAULT-07 | `DATOS_O_ENTORNO` ✅ | ALTA | 61 | `DATOS_O_ENTORNO` ✅ | ALTA | 40 |
+| FAULT-08 | `SELECTOR_DESFASADO` ❌ | ALTA | 74 | sin diagnóstico ❌ | — | 62 |
+| FAULT-09 | `SELECTOR_DESFASADO` ❌ | ALTA | 92 | `DEFECTO_TEST` ✅ | ALTA | 74 |
+
+En la corrida 3, FAULT-08 terminó sin diagnóstico: el modelo dijo "Necesito leer más contexto" y terminó sin llamar herramientas.
+
+- **Aciertos por corrida:** 2/6 · 3/6 · 4/6.
+- **Total:** 9/18 (50 %).
+- **Voto mayoritario:** 2/6 (FAULT-05 no tiene mayoría).
+- **Tiempo medio de las 18 corridas:** 84 s, contra 97 s del triage manual.
+
+### Hallazgos
+- El mismo fallo recibe categorías distintas en 4 de 6 casos.
+- La confianza declarada casi siempre es ALTA y no informa.
+- La concordancia entre las 3 corridas fue correcta en los 2 casos unánimes.
+- 1 de 18 corridas terminó sin diagnóstico.
+
+Los logs completos están fuera del repo, en `~/triage-runs/`.

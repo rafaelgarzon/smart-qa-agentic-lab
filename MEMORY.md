@@ -8,7 +8,7 @@
 - `npm run test:all`: 43 passed en Chromium. `npm run lint:determinism`: 0 `waitForTimeout`.
 - FAULT-01 a FAULT-03 sembrados; resultados y clave en `docs/rca/fault-injection-key.md`.
 - FAULT-04 a FAULT-09 sembrados para medición ciega; clave en docs/rca/blind-key.md
-- Medición ciega FAULT-04 a 09, corrida 1: el agente acierta la mitad que el triage manual, en el mismo tiempo; detalle en docs/rca/
+- Medición ciega FAULT-04 a 09, 3 corridas: el agente local acierta la mitad de las veces y cambia de respuesta entre corridas; el triage manual acierta más en el mismo tiempo; detalle en docs/rca/blind-triage.md
 - Calibración de /triage: 3/3 fallos sembrados con la categoría correcta (1 corrida cada uno, dentro del diseño; detalle en docs/rca/).
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
@@ -35,7 +35,8 @@
 - Ajustar triage.md mirando fallos de una medición ciega: pasan a estar dentro de la muestra
 
 ## Pendientes y observaciones
-- Sembrar fallos nuevos (fuera de la muestra) sin ajustar /triage a ellos.
+- Sembrar un nuevo lote ciego (FAULT-10 en adelante) para validar cualquier cambio en triage.md
+- Probar el mismo triage.md con un modelo en la nube sobre FAULT-04 a 09
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
 - Repetir cada medición 3 veces.
