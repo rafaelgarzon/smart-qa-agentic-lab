@@ -9,6 +9,7 @@
 - FAULT-01 a FAULT-03 sembrados; resultados y clave en `docs/rca/fault-injection-key.md`.
 - FAULT-04 a FAULT-09 sembrados para medición ciega; clave en docs/rca/blind-key.md
 - Medición ciega FAULT-04 a 09, 3 corridas: el agente local acierta la mitad de las veces y cambia de respuesta entre corridas; el triage manual acierta más en el mismo tiempo; detalle en docs/rca/blind-triage.md
+- Misma medición ciega con Claude Code + Sonnet: acierta mucho más que el modelo local y algo más que el triage manual (muestra pequeña), de forma estable y unas 5 veces más rápido; detalle en docs/rca/blind-triage-claude.md
 - Calibración de /triage: 3/3 fallos sembrados con la categoría correcta (1 corrida cada uno, dentro del diseño; detalle en docs/rca/).
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
@@ -33,10 +34,10 @@
 - Guardar contexto importante solo en la auto-memoria de Claude Code (OpenCode no la ve).
 - Interceptar `**/inventory.html`: el login navega en el cliente y no pide ese documento a la red, así que la ruta nunca se activa.
 - Ajustar triage.md mirando fallos de una medición ciega: pasan a estar dentro de la muestra
+- El reporter de evidencias debe guardar todos los errores del test, no solo el primero: un timeout global oculta el error que lo causó
 
 ## Pendientes y observaciones
 - Sembrar un nuevo lote ciego (FAULT-10 en adelante) para validar cualquier cambio en triage.md
-- Probar el mismo triage.md con un modelo en la nube sobre FAULT-04 a 09
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
 - Repetir cada medición 3 veces.
