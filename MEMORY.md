@@ -10,6 +10,7 @@
 - FAULT-04 a FAULT-09 sembrados para medición ciega; clave en docs/rca/blind-key.md
 - Medición ciega FAULT-04 a 09, 3 corridas: el agente local acierta la mitad de las veces y cambia de respuesta entre corridas; el triage manual acierta más en el mismo tiempo; detalle en docs/rca/blind-triage.md
 - Misma medición ciega con Claude Code + Sonnet: acierta mucho más que el modelo local y algo más que el triage manual (muestra pequeña), de forma estable y unas 5 veces más rápido; detalle en docs/rca/blind-triage-claude.md
+- Reporter de evidencias v2 (ADR 003): `last-failure.json` con `schemaVersion: 2`, todos los errores, paso fallido, snapshot ARIA y consola/red del navegador (adjunto `browser-evidence` del fixture `page`).
 - Calibración de /triage: 3/3 fallos sembrados con la categoría correcta (1 corrida cada uno, dentro del diseño; detalle en docs/rca/).
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 

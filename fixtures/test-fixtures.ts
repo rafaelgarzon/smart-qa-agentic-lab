@@ -5,6 +5,12 @@ import { CartPage } from '../pages/cart.page';
 import { CheckoutStepOnePage } from '../pages/checkout-step-one.page';
 import { CheckoutStepTwoPage } from '../pages/checkout-step-two.page';
 import { CheckoutCompletePage } from '../pages/checkout-complete.page';
+import {
+  BROWSER_EVIDENCE_ATTACHMENT,
+  BrowserEvidence,
+  MAX_EVIDENCE_ITEMS,
+  stripQuery,
+} from '../types/evidence.types';
 
 export type ResponsePatch = {
   url: string;
@@ -29,7 +35,22 @@ type ProjectFixtures = {
 export const test = base.extend<ProjectOptions & ProjectFixtures>({
   abortedRoutes: [[], { option: true }],
   responsePatches: [[], { option: true }],
-  page: async ({ page, abortedRoutes, responsePatches }, use) => {
+  page: async ({ page, abortedRoutes, responsePatches }, use, testInfo) => {
+    // Evidencia de navegador para el reporter (ADR 003); solo se adjunta si el test falla.
+    const evidence: BrowserEvidence = { consoleErrors: [], failedRequests: [] };
+    page.on('console', (message) => {
+      if (message.type() !== 'error' || evidence.consoleErrors.length >= MAX_EVIDENCE_ITEMS) return;
+      const { url } = message.location();
+      evidence.consoleErrors.push({ text: message.text(), url: url ? stripQuery(url) : null });
+    });
+    page.on('requestfailed', (request) => {
+      if (evidence.failedRequests.length >= MAX_EVIDENCE_ITEMS) return;
+      evidence.failedRequests.push({
+        url: stripQuery(request.url()),
+        method: request.method(),
+        reason: request.failure()?.errorText ?? 'desconocido',
+      });
+    });
     for (const pattern of abortedRoutes) {
       await page.route(pattern, (route) => route.abort('connectionfailed'));
     }
@@ -44,6 +65,12 @@ export const test = base.extend<ProjectOptions & ProjectFixtures>({
       });
     }
     await use(page);
+    if (testInfo.status !== testInfo.expectedStatus) {
+      await testInfo.attach(BROWSER_EVIDENCE_ATTACHMENT, {
+        body: JSON.stringify(evidence),
+        contentType: 'application/json',
+      });
+    }
   },
   loginPage: async ({ page }, use) => {
     await use(new LoginPage(page));
