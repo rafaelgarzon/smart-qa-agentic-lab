@@ -10,6 +10,9 @@
       "models": {
         "qwen3.6-35b-a3b-mlx": {
           "name": "Qwen3.6 35B A3B MLX 4-bit (local)"
+        },
+        "devstral-small-2-24b-instruct-2512": {
+          "name": "Devstral Small 2 24B MLX 4-bit (local)"
         }
       }
     }
