@@ -37,3 +37,14 @@ date: 2026-10-25
 ## Enlaces Relacionados
 - [[002-formalizacion-ciclo-sdd-spec-ears]]
 - `reporters/agent-context.ts` · `fixtures/test-fixtures.ts` · `types/evidence.types.ts`
+
+## Prueba antes/después con FAULT-05 (no ciega)
+> No es una medición: FAULT-05 es el fallo que motivó este cambio, así que ya está dentro de la muestra. Sirve como comprobación de que v2 entrega la evidencia que faltaba, no como estimación de precisión.
+
+| Reporter | Agente local (Qwen3.6 35B A3B) | Claude Code + Sonnet |
+| :--- | :--- | :--- |
+| v1 | 1/3 aciertos | se abstuvo 3/3 (`INDETERMINADO`) |
+| v2 (1 corrida) | `SELECTOR_DESFASADO` ✅ · 166 s | `SELECTOR_DESFASADO` ✅ · 17 s |
+
+- **Qwen** acertó la categoría, pero afirmó que el botón no tiene el atributo `data-test`, algo que el snapshot ARIA no muestra: es evidencia inventada.
+- **Sonnet** declaró que no podía ver ese atributo en el snapshot y descartó la telemetría de `backtrace` como ruido.
