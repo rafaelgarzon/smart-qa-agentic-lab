@@ -2,7 +2,7 @@
 
 ## Estado actual
 - Fecha: 2026-11-21 · Rama: `main` (spec 006 integrada; ramas `feature/*` y `fault-injection*` ya históricas).
-- Plan de trabajo (`docs/backlog-plan-trabajo.md`, 8 semanas desde 2026-10-03): Sprints 1 y 3 cerrados; Sprint 2 sin CI ni pruebas de API; Sprint 4 en curso (falta medir `/repair`).
+- Plan de trabajo (`docs/backlog-plan-trabajo.md`, iniciado 2026-10-03): fecha de cierre vigente **2026-12-30** (reemplaza las 8 semanas originales). Sprints 1 y 3 cerrados; Sprint 2 sin CI ni pruebas de API; Sprint 4 en curso (falta medir `/repair`).
 - Specs cerradas al 100% (detalle en `specs/`):
   - 001 login: 5 tests · 002 checkout: 3 · 003 inventory: 7
   - 004 cart: 10 · 005 sort: 8 · 006 session-logout: 10
