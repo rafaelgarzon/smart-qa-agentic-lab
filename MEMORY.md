@@ -44,3 +44,4 @@
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
 - Repetir cada medición 3 veces.
 - FAULT-04 futuro: cortar el bundle JS y enriquecer el reporter con errores de consola y peticiones fallidas en last-failure.json.
+- Decidir si la §4 de la constitución nombra data-test
