@@ -1,7 +1,8 @@
 # MEMORY - Smart QA Agentic Lab
 
 ## Estado actual
-- Fecha: 2026-10-23 · Rama: `main` (spec 006 integrada; ramas `feature/*` y `fault-injection*` ya históricas).
+- Fecha: 2026-11-21 · Rama: `main` (spec 006 integrada; ramas `feature/*` y `fault-injection*` ya históricas).
+- Plan de trabajo (`docs/backlog-plan-trabajo.md`, 8 semanas desde 2026-10-03): Sprints 1 y 3 cerrados; Sprint 2 sin CI ni pruebas de API; Sprint 4 en curso (falta medir `/repair`).
 - Specs cerradas al 100% (detalle en `specs/`):
   - 001 login: 5 tests · 002 checkout: 3 · 003 inventory: 7
   - 004 cart: 10 · 005 sort: 8 · 006 session-logout: 10
@@ -13,6 +14,8 @@
 - Reporter de evidencias v2 (ADR 003): `last-failure.json` con `schemaVersion: 2`, todos los errores, paso fallido, snapshot ARIA y consola/red del navegador (adjunto `browser-evidence` del fixture `page`).
 - Qwen con reporter v2 y prueba descartada de Devstral; detalle en docs/rca/devstral-trial.md
 - Calibración de /triage: 3/3 fallos sembrados con la categoría correcta (1 corrida cada uno, dentro del diseño; detalle en docs/rca/).
+- `/repair SELECTOR_DESFASADO` en `main`: propone un unified diff solo en `pages/*.page.ts`, con el localizador respaldado por `pageSnapshot` o el MCP; la persona lo aplica (HitL).
+- Demo de `/repair` con FAULT-05 de punta a punta (2026-11-21): diff a `getByRole('button', { name: 'Continue Shopping' })`, `git apply --check` OK, `chromium-05` y `test:all` en verde. Vive solo en la rama local `demo/repair-fault-05` (commits c9ec9e7 y ca7b8fc, nota en docs/rca/repair-demo-fault-05.md); no se fusiona para que FAULT-05 siga fallando. No es medición: FAULT-05 ya estaba en la muestra.
 - Claude Code integrado (commits 58e3905..60f8fc8): `CLAUDE.md` importa AGENTS.md y MEMORY.md, MCP, modo plan y hook `guard-assertions`.
 
 ## Decisiones clave
@@ -39,7 +42,9 @@
 - El reporter de evidencias debe guardar todos los errores del test, no solo el primero: un timeout global oculta el error que lo causó
 
 ## Pendientes y observaciones
-- Sembrar un nuevo lote ciego (FAULT-10 en adelante) para validar cualquier cambio en triage.md
+- Sembrar un nuevo lote ciego (FAULT-10 en adelante) para validar cualquier cambio en triage.md y medir `/repair`: varios `SELECTOR_DESFASADO` (data-test, texto y rol cambiados; uno con el localizador escrito en el test para el guardarraíl 3) más fallos de otra categoría para la precondición. Métricas: diff aplica, test pasa, guardarraíles respetados, tiempo.
+- CI pendiente (Sprint 2): workflow con `lint:determinism` + `test:all` que suba `last-failure.json` y el reporte como artefactos.
+- Pruebas de API pendientes (Sprint 2): SauceDemo no tiene API pública; decidir otro objetivo o sacarlas del alcance con un ADR.
 - Cada herramienta usa un MCP de Playwright distinto: `@playwright/mcp` en `.mcp.json` y `@executeautomation/playwright-mcp-server` en `opencode.json`.
 - `/triage` tiene fija la spec `specs/001-login-saucedemo/spec.md`; para fallos de otras specs, indicar la spec correspondiente.
 - Repetir cada medición 3 veces.
