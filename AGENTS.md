@@ -29,12 +29,12 @@ types/            Contratos, constantes y oráculos puros (*.types.ts)
 fixtures/         test-fixtures.ts (fixtures de Playwright que inyectan los POM)
 utils/            urls.ts
 tests/            Suites productivas: auth, checkout, inventory, cart, sort, logout (*.spec.ts)
-tests/faults/     Fallos sembrados FAULT-01 a FAULT-03 (dataset de calibración; la clave vive en docs/rca/)
+tests/faults/     Fallos sembrados FAULT-01 a FAULT-09 (dataset de calibración; la clave vive en docs/rca/)
 reporters/        agent-context.ts → emite test-results/last-failure.json sanitizado
-docs/             constitution.md · adr/ · rca/fault-injection-key.md · backlog-plan-trabajo.md
+docs/             constitution.md · adr/ (002, 003) · rca/ · backlog-plan-trabajo.md
 .opencode/agents/     planner · implementer · reviewer
 .opencode/commands/   sdd-spec · sdd-clarify · sdd-plan · sdd-tasks · sdd-implement · sdd-validate · sdd-status · triage · repair
-.claude/          settings.json (modo plan, permisos) · hooks/guard-assertions.mjs
+.claude/          settings.json (modo plan, permisos) · hooks/guard-assertions.mjs · commands/triage.md · commands/repair.md
 .mcp.json         Servidores MCP de Claude Code (playwright, context7)
 opencode.json     Servidor MCP de OpenCode (playwright)
 playwright.config.ts          baseURL SauceDemo, ignora tests/faults/, reporters html + agent-context

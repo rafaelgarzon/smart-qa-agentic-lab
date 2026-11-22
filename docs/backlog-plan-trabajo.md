@@ -1,3 +1,5 @@
+> Fuente oficial del plan; el documento en Claude Docs es una vista para presentar.
+
 # Plan de trabajo – Automatización inteligente con IA
 Oct 3, 2026 · @Rafael garzon
 
